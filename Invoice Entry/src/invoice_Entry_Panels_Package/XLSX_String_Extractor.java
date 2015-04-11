@@ -17,22 +17,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class XLSX_String_Extractor {
 
-	String xlsx_file_name;
 	static XSSFWorkbook wb;
 	XSSFSheet ws;
-	String[][] file_data;
-	int last_row;
-	int last_column;
+	public int last_row;
+	public int last_column;
 	
-	XLSX_String_Extractor(String xlsx_file_name) {
-		this.xlsx_file_name = xlsx_file_name;
+	public XLSX_String_Extractor(File file) {
 		try {
-			XLSX_String_Extractor.wb = new XSSFWorkbook(new FileInputStream(new File(xlsx_file_name)));
+			XLSX_String_Extractor.wb = new XSSFWorkbook(new FileInputStream(file));
 			this.ws = wb.getSheetAt(0);
 			this.last_row = ws.getLastRowNum(); //get last row in sheet
-			this.last_column = ws.getRow(0).getLastCellNum(); //get last column in sheet
-			this.file_data = new String[last_row][last_column]; //initialize array to store data
-			
+			this.last_column = ws.getRow(0).getLastCellNum(); //get last column in sheet			
 			FormulaEvaluator evaluate = wb.getCreationHelper().createFormulaEvaluator();
 			evaluate.evaluateAll();
 		}catch(FileNotFoundException err) {
@@ -44,19 +39,39 @@ public class XLSX_String_Extractor {
 		}
 	}
 	
-	public String[][] getDataStringArray() {
+	public Object[] getColumnHeaders() {
 		String cell_value = null;
-		String[][] return_data = new String[last_row][last_column];
+		Object[] column_headers = new String[last_column];
 		XSSFCell cell = null;
 		XSSFRow row = null;
-		
-		for(int cur_row = 0; cur_row < last_row + 1; cur_row++) {
+		for(int cur_row = 0; cur_row < 1; cur_row++) {
 			for(int cur_col = 0; cur_col < last_column + 1; cur_col++) {
 				try {
 					row = ws.getRow(cur_row);
 					cell = row.getCell(cur_col);
 					cell_value = getCellToString(cell.getCellType(), cell, wb);
-					return_data[cur_row][cur_col] = cell_value;
+					column_headers[cur_col] = (Object)cell_value;
+				}catch(NullPointerException err) {
+					err.printStackTrace();
+					System.out.println("Null Pointer Error at: Row: " + cur_row + ", Column: " + cur_col);
+				}
+			}
+		}
+		return column_headers;
+	}
+	
+	public Object[][] getDataStringArray() {
+		String cell_value = null;
+		Object[][] return_data = new String[last_row][last_column];
+		XSSFCell cell = null;
+		XSSFRow row = null;
+		for(int cur_row = 1; cur_row < last_row + 1; cur_row++) {
+			for(int cur_col = 0; cur_col < last_column + 1; cur_col++) {
+				try {
+					row = ws.getRow(cur_row);
+					cell = row.getCell(cur_col);
+					cell_value = getCellToString(cell.getCellType(), cell, wb);
+					return_data[cur_row][cur_col] = (Object)cell_value;
 				}catch(NullPointerException err) {
 					err.printStackTrace();
 					System.out.println("Null Pointer Error at: Row: " + cur_row + ", Column: " + cur_col);

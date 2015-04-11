@@ -8,7 +8,7 @@ public class INVOICE_SEARCH_FUNCTIONS {
 	static String invoice_number;
 	static int search_index;
 	
-	static void set_data_array(String[][] data) {
+	public static void set_data_array(String[][] data) {
 		data_array = data;
 	}
 	
