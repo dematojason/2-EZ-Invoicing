@@ -35,13 +35,5 @@ public class GUI_Invoice_Entry {
 		panel_invoice_chep.getInvoiceEntry_Chep();
 	}
 	
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable(){
-			@Override
-			public void run(){
-				new GUI_Invoice_Entry();
-			}
-		});
-	}
 
 }

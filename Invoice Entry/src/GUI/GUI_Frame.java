@@ -9,6 +9,12 @@ import java.util.*;
 
 import javax.swing.*;
 
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import xlsx_Extractor_Package.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -59,6 +65,11 @@ public class GUI_Frame {
 									}
 									Spreadsheet spreadsheet = new Spreadsheet(selectedFile);
 									JScrollPane scroll_pane = new JScrollPane(spreadsheet.getTable());
+									scroll_pane.getHorizontalScrollBar();
+									scroll_pane.setHorizontalScrollBarPolicy(
+											JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+											scroll_pane.setVerticalScrollBarPolicy(
+											JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 									content_pane.add(scroll_pane, BorderLayout.CENTER);
 									refresh_frame();
 								} catch(NullPointerException e1) {
@@ -205,10 +216,9 @@ public class GUI_Frame {
 			content_pane.revalidate();
 		}
 		
-		public static void main(String[] args) {
+		public static void main(String[] args) throws IOException {
 			
 			GUI_Frame gui = new GUI_Frame();
-			
 		}
 	
 }

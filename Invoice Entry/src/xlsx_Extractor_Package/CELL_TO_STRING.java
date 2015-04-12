@@ -16,10 +16,9 @@ public class CELL_TO_STRING {
 	private static Workbook excel_workbook;
 	private static int cell_type;
 	
-	public static void setCellToString(int cellType, XSSFCell cell, XSSFWorkbook wb) {
+	public static void setCellToString(int cellType, XSSFCell cell) {
 		cell_value = cell;
 		cell_type = cellType;
-		excel_workbook = wb;
 	}
 	
 	public static String getCellToString() throws RuntimeException {
@@ -56,7 +55,7 @@ public class CELL_TO_STRING {
 	
 	private static String getStringBlankCell() {
 		
-		return "-";
+		return "";
 		
 	}
 	
