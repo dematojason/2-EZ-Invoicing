@@ -219,6 +219,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		if(action.equals("Cancel")) {
 			System.exit(0);
 		}else if(action.equals("Insert")) {
+			System.out.println("INSERTING.");
 			frame_to_importSheet = new Invoice_Entry_toImportSheet("Chep");
 			frame_to_importSheet.importDataChep(text_account.getText(), text_invoice_number.getText(),
 					text_invoice_date.getText(), text_reference.getText(), text_product, text_region, 

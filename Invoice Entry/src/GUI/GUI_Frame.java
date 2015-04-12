@@ -115,8 +115,8 @@ public class GUI_Frame {
 								refresh_frame();
 							}
 						});
-						JMenuItem warehouse_invoice_entry = new JMenuItem("Warehouse Invoice Entry");
-						warehouse_invoice_entry.addActionListener(new ActionListener() {
+						JMenuItem delivery_invoice_entry = new JMenuItem("Delivery Invoice Entry");
+						delivery_invoice_entry.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								Panel_Invoice_Entry_Warehouse iew_panel = new Panel_Invoice_Entry_Warehouse();
 								content_pane.removeAll();
@@ -142,7 +142,7 @@ public class GUI_Frame {
 						//  Add menu items invoice menu
 						invoice_menu.add(CHEP_invoice_entry);
 						invoice_menu.add(standard_invoice_entry);
-						invoice_menu.add(warehouse_invoice_entry);
+						invoice_menu.add(delivery_invoice_entry);
 						// invoice_menu.add(nonapproved_invoice_entry);
 						// invoice_menu.add(approve_nonapproved_invoice_entry);
 				/**********************************************************************************************************************
@@ -213,6 +213,7 @@ public class GUI_Frame {
 		public void refresh_frame()	{
 			frame.pack();
 			frame.revalidate();
+			frame.repaint();
 			content_pane.revalidate();
 		}
 		

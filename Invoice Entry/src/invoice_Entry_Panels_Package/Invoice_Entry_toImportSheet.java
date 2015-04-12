@@ -48,7 +48,7 @@ public class Invoice_Entry_toImportSheet {
 				chep_invoiceEntryData_toImportSheet[z][8] = tax;
 				chep_invoiceEntryData_toImportSheet[z][9] = net_total;
 			}
-			FileInputStream fis = new FileInputStream(new File("C:\\Users\\jason.demato\\Documents\\Programming\\Invoice Entry\\Invoice Charge Import Sheet.xlsx"));
+			FileInputStream fis = new FileInputStream(new File("C:\\Users\\Torswan\\Downloads\\Invoice Charge Import Sheet.xlsx"));
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
 			XSSFSheet ws = wb.getSheetAt(0);
 			
@@ -121,7 +121,7 @@ public class Invoice_Entry_toImportSheet {
 			formatAllChepCells(ws, wb);
 			
 			fis.close();
-			FileOutputStream fos = new FileOutputStream(new File("C:\\Users\\jason.demato\\Documents\\Programming\\Invoice Entry\\Invoice Charge Import Sheet.xlsx"));
+			FileOutputStream fos = new FileOutputStream(new File("C:\\Users\\Torswan\\Downloads\\Invoice Charge Import Sheet.xlsx"));
 			wb.write(fos);
 			fos.close();
 			wb.close();

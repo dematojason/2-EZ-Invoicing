@@ -4,9 +4,12 @@ import java.io.File;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
+import com.sun.prism.paint.Color;
 import com.sun.xml.internal.ws.api.Component;
 
 import xlsx_Extractor_Package.XLSX_Extractor;
@@ -23,6 +26,9 @@ public class Spreadsheet  {
 			excel_extractor = new XLSX_Extractor(file);
 			table = new JTable(excel_extractor.getCellData(), excel_extractor.getColumnHeaders());
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+			if (defaults.get("Table.alternateRowColor") == null)
+			    defaults.put("Table.alternateRowColor", new Color(240, 240, 240, 0));
 		}
 		   
 		
