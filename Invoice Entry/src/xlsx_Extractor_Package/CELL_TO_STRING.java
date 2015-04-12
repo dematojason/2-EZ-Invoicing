@@ -56,7 +56,7 @@ public class CELL_TO_STRING {
 	
 	private static String getStringBlankCell() {
 		
-		return "-";
+		return "";
 		
 	}
 	

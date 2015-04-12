@@ -28,8 +28,8 @@ public class XLSX_String_Extractor {
 			this.ws = wb.getSheetAt(0);
 			this.last_row = ws.getLastRowNum(); //get last row in sheet
 			this.last_column = ws.getRow(0).getLastCellNum(); //get last column in sheet			
-			FormulaEvaluator evaluate = wb.getCreationHelper().createFormulaEvaluator();
-			evaluate.evaluateAll();
+			FormulaEvaluator evaluater = wb.getCreationHelper().createFormulaEvaluator();
+			evaluater.evaluateAll();
 		}catch(FileNotFoundException err) {
 			err.printStackTrace();
 			System.out.println("The file chosen could not be found.");

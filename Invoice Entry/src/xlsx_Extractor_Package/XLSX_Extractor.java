@@ -15,13 +15,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class XLSX_Extractor {
 	
 	static Scanner my_scanner = new Scanner(System.in);
-
+	
 	public static void main(String[] args) {
 		
 		Scanner scan = my_scanner;
 		
 		try {
-			String excel_file_name = "C:\\Users\\jason.demato\\Documents\\Invoicing\\Invoice Charges Entry Testing 123.xlsm";
+			//C:\Users\Jdemato\Desktop\IBC\Purchase Order Workbook Copies\Format Type IBC
+			String excel_file_name = "C:\\Users\\Jdemato\\Documents\\Invoice Charge Import Sheet.xlsx";
 			File file_name = new File(excel_file_name);
 			FileInputStream fis = new FileInputStream(file_name);
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
@@ -54,7 +55,7 @@ public class XLSX_Extractor {
 			System.out.println("file_data array:  ");
 			test_print_2D_string_array(file_data, last_row, last_column);
 			
-			System.out.println("Enter Search Parameter: ");
+			/*System.out.println("Enter Search Parameter: ");
 			String search_param = scan.nextLine().trim(); //get from user... will be taken from GUI
 						
 			System.out.println("Enter the value you would like to search: ");
@@ -75,7 +76,7 @@ public class XLSX_Extractor {
 			System.out.println("invoice search matching rows arraylist size =  " + invoice_search_matching_rows.size());
 			for(int i = 0; i < invoice_search_matching_rows.size(); i++) {
 				System.out.println("invoice search matching rows get (" + i + ")  = " + invoice_search_matching_rows.get(i));
-			}
+			}*/
 			
 		}catch(IOException e) {
 			System.out.println("Que?");
@@ -84,7 +85,7 @@ public class XLSX_Extractor {
 		
 	}
 	
-private static String[][] iterate_all_cells(XSSFWorkbook wb, XSSFSheet ws, int last_row, int last_column) {
+	private static String[][] iterate_all_cells(XSSFWorkbook wb, XSSFSheet ws, int last_row, int last_column) {
 		
 		String cell_value_string = null;
 		String[][] string_array_buffer = new String[last_row][last_column];
@@ -127,7 +128,7 @@ private static String[][] iterate_all_cells(XSSFWorkbook wb, XSSFSheet ws, int l
 					}
 				}catch(NullPointerException e) {
 					
-					System.out.println("row =  " + i + " and column =  " + x);
+					System.out.println("NullPointerException @ row =  " + i + " and column =  " + x);
 					
 				}
 			}
