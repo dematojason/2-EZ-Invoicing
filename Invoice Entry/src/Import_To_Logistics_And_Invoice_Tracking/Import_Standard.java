@@ -19,6 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 import xlsx_Extractor_Package.CELL_TO_STRING;
+import xlsx_Extractor_Package.XLSX_Extractor;
 
 public class Import_Standard {
 	
@@ -48,12 +49,17 @@ public class Import_Standard {
 	File file;
 	FileInputStream fis;
 	XSSFWorkbook wb;
-	XSSFSheet po_ws;
-	XSSFSheet bulk_ws;
+	File import_file = new File("");
+	Object[][] output_file_data;
+	Object[][] import_file_data;
 	
-	public Import_Standard(File passed_file) {
+	public Import_Standard(File passed_import_file, File passed_output_file) {
 		
-		this.file = passed_file;
+		XLSX_Extractor extract_import = new XLSX_Extractor(passed_import_file);
+		this.import_file_data = extract_import.getCellData();
+		
+		XLSX_Extractor extract_output = new XLSX_Extractor(passed_output_file);
+		this.output_file_data = extract_output.getCellData();
 		
 		try {
 			

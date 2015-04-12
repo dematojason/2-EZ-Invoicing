@@ -30,6 +30,10 @@ public class Invoice_Entry_toImportSheet {
 		this.sheet_type = import_string;
 	}
 	
+	public void importDataStandard() {
+		
+	}
+	
 	//Imports data from CHEP style panel into CHEP Invoice section of Invoice Charge Import Sheet.xslx
 	public void importDataChep(String account_name, String invoice_number, String invoice_date,
 			String reference, JTextField[] descriptions, JTextField[] regions, JTextField[] percentages,
@@ -48,15 +52,12 @@ public class Invoice_Entry_toImportSheet {
 				chep_invoiceEntryData_toImportSheet[z][8] = tax;
 				chep_invoiceEntryData_toImportSheet[z][9] = net_total;
 			}
-			FileInputStream fis = new FileInputStream(new File("C:\\Users\\jason.demato\\Documents\\Programming\\Invoice Entry\\Invoice Charge Import Sheet.xlsx"));
+			FileInputStream fis = new FileInputStream(new File("C:\\Users\\Jdemato\\Documents\\Invoice Charge Import Sheet.xlsx"));
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
 			XSSFSheet ws = wb.getSheetAt(0);
 			
 			checkSheetFormat(ws); //Make sure format of Invoices Import Sheet is correct
 			
-			Custom_Functions.setLastRowFinder(ws);
-			//getLastRow_Chep returns last row containing value in the CHEP columns of the invoice import sheet
-			/*int last_row = Custom_Functions.getLastRow_Chep();*/
 			int last_row_with_value = ws.getLastRowNum() + 1;
 			
 			//create cell variable of type Cell for inserting new values to output sheet
@@ -64,7 +65,7 @@ public class Invoice_Entry_toImportSheet {
 			int row_count = 0;
 			int column = 0;
 			
-			if(ws.getLastRowNum() > 0) {
+			if(last_row_with_value > 0) {
 				//loop beginning at last row with value + 1; for however many entries are necessary
 				//section of invoice Charge Import Sheet.xlsx
 				for(int next_row = last_row_with_value; next_row < descriptions.length + last_row_with_value; next_row++) {
@@ -90,15 +91,19 @@ public class Invoice_Entry_toImportSheet {
 									/*divide by 100 for formatting cell to percentage
 									excel's percentage formatter multiplies the cell value by 100
 									and displays the result with the percent symbol*/
-									cell.setCellValue(Integer.parseInt(percentages[row_count].getText().toString())/100);
-									Format_Cell fmt_percent = new Format_Cell(wb, cell); //create new object of custom Format_Cell class
-									fmt_percent.percentage(0); //format to percentage (0 decimal places)
+									cell.setCellValue(percentages[row_count].getText().toString());
 									break;
 								case 7: //Sub Total ($)
 								case 8: //Tax ($)
 								case 9: //Net Total ($)
 									cell.setCellType(Cell.CELL_TYPE_STRING);
-									cell.setCellValue(chep_invoiceEntryData_toImportSheet[row_count][x]);
+									if(chep_invoiceEntryData_toImportSheet[row_count][x] != "0") {
+										double dec = (Double.parseDouble(percentages[row_count].getText().toString()) / 100);
+										String dollar_amount = String.valueOf(dec * Double.parseDouble(chep_invoiceEntryData_toImportSheet[row_count][x]));
+										cell.setCellValue(dollar_amount);
+									}else{
+										cell.setCellValue(chep_invoiceEntryData_toImportSheet[row_count][x]);
+									}
 									break;
 								default:
 									cell.setCellType(Cell.CELL_TYPE_STRING);
@@ -118,10 +123,10 @@ public class Invoice_Entry_toImportSheet {
 			}
 			
 			//format all cells to their respective formats (currency, date, percentage, etc.)
-			formatAllChepCells(ws, wb);
+			/*formatAllChepCells(ws, wb);*/
 			
 			fis.close();
-			FileOutputStream fos = new FileOutputStream(new File("C:\\Users\\jason.demato\\Documents\\Programming\\Invoice Entry\\Invoice Charge Import Sheet.xlsx"));
+			FileOutputStream fos = new FileOutputStream(new File("C:\\Users\\Jdemato\\Documents\\Invoice Charge Import Sheet.xlsx"));
 			wb.write(fos);
 			fos.close();
 			wb.close();
