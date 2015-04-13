@@ -36,13 +36,11 @@ public class XLSX_Extractor {
 			wb.close();
 			fis.close();
 			
-			
 		} catch (IOException e){
 			e.printStackTrace();
 		}
 	
 	}
-	
 	public static void get_column_headers( XSSFSheet ws, int last_column) {
 		XSSFCell this_cell = null;
 		XSSFRow row = null;

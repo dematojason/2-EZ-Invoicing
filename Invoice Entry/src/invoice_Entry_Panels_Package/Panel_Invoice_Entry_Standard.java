@@ -47,7 +47,7 @@ public class Panel_Invoice_Entry_Standard extends JPanel {
 		
 		getInvoiceEntry_Standard();
 	}
-		
+	
 	public void getInvoiceEntry_Standard() {
 		/*Custom_Functions my_frame = new Custom_Functions(frame);*/
 		setLayout(new MigLayout());
