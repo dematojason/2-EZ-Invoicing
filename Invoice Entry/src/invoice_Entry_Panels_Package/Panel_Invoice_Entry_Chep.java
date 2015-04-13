@@ -17,7 +17,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
 	
-	Dimension IEC_DIMENSION = new Dimension(700,400);
+	Dimension iec_dimension = new Dimension(700,400);
 	
 	JLabel label_main_invoice_info;
 	JLabel label_main_product_breakup;
@@ -98,6 +98,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	public void getInvoiceEntry_Chep() {
 		/*Custom_Functions my_frame = new Custom_Functions();*/
 		setLayout(new MigLayout());
+		setPreferredSize(iec_dimension);
 		
 		//add action listeners to JButtons
 		button_cancel.addActionListener(this);
@@ -195,6 +196,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 			add(button_insert, "tag ok, span, split 2, sizegroup bttn");
 			add(button_cancel, "tag cancel, sizegroup bttn");
 			
+			
 			/*frame.setResizable(true);
 			frame.add(panel);
 			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -229,7 +231,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		}
 	}
 	public Dimension getDimension() {
-		return IEC_DIMENSION;
+		return iec_dimension;
 	}
 	
 }

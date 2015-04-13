@@ -1,20 +1,19 @@
 package GUI;
 
+import invoice_Entry_Panels_Package.Panel_Front;
 import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Chep;
 import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Delivery;
 import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Standard;
-import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Warehouse;
+/*import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Warehouse;*/
+
+
+
+
+
 
 import java.io.*;
-import java.util.*;
 
 import javax.swing.*;
-
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import xlsx_Extractor_Package.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -24,7 +23,7 @@ import java.awt.event.*;
 public class GUI_Frame {
 		
 		JFrame frame;
-		JPanel content_pane;
+		Panel_Front content_pane;
 		JFileChooser file_chooser;
 		
 		public GUI_Frame() {
@@ -32,18 +31,18 @@ public class GUI_Frame {
 				menu_bar_setup();
 		}
 		
-		public void frame_setup()	{
+		public void frame_setup() {
 				frame = new JFrame("ASM");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				content_pane = new JPanel();
-				content_pane.setLayout(new BorderLayout());	
-				content_pane.setPreferredSize(new Dimension(1200,800));
+				content_pane = new Panel_Front();
 				frame.setContentPane(content_pane);
+				frame.pack();
+				frame.setLocationRelativeTo(null); //center frame
 				frame.setVisible(true);
 				refresh_frame();
 		}
 		
-		public void menu_bar_setup()	{
+		public void menu_bar_setup() {
 				
 				//Menubar
 				JMenuBar menu_bar = new JMenuBar();
