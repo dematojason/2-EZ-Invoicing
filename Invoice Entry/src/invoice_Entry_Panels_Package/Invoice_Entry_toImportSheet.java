@@ -71,7 +71,7 @@ public class Invoice_Entry_toImportSheet {
 				for(int next_row = last_row_with_value; next_row < descriptions.length + last_row_with_value; next_row++) {
 					Row row = ws.createRow((short)next_row);
 					for(int x = 0; x < 10; x++) {
-						column = x + 18;
+						column = x + 17;
 						//set cell = the next empty row (row_next), the matching output column...
 						//matching output columns for CHEP beginning @ column 18 ("S"), go until column 27 ("AB")
 						//See Excel file "Invoice Charge Import Sheet.xlsx" for reference
@@ -154,13 +154,13 @@ public class Invoice_Entry_toImportSheet {
 			err_num = 1;
 		}else if(ws.getRow(1).getCell(11).toString().equalsIgnoreCase("Product Reference #") == false) { //Cell L2
 			err_num = 2;
-		}else if(ws.getRow(1).getCell(14).toString().equalsIgnoreCase("Charge Type") == false) { //Cell O2
+		}else if(ws.getRow(1).getCell(14).toString().equalsIgnoreCase("Charge Amount ($)") == false) { //Cell O2
 			err_num = 3;
-		}else if(ws.getRow(1).getCell(19).toString().equalsIgnoreCase("Invoice Number") == false ) { //Cell T2
+		}else if(ws.getRow(1).getCell(18).toString().equalsIgnoreCase("Invoice Number") == false ) { //Cell T2
 			err_num = 4;
-		}else if(ws.getRow(1).getCell(23).toString().equalsIgnoreCase("Region") == false ) { //Cell X2
+		}else if(ws.getRow(1).getCell(22).toString().equalsIgnoreCase("Region") == false ) { //Cell X2
 			err_num = 5;
-		}else if(ws.getRow(1).getCell(27).toString().equalsIgnoreCase("Net Total ($)") == false ) { //Cell AB2
+		}else if(ws.getRow(1).getCell(26).toString().equalsIgnoreCase("Net Total ($)") == false ) { //Cell AB2
 			err_num = 6;
 		}
 		
@@ -176,13 +176,13 @@ public class Invoice_Entry_toImportSheet {
 					System.out.println("The title name in cell 'O2' is incorrect!");
 					break;
 				case 4:
-					System.out.println("The title name in cell 'T2' is incorrect!");
+					System.out.println("The title name in cell 'S2' is incorrect!");
 					break;
 				case 5:
-					System.out.println("The title name in cell 'X2' is incorrect!");
+					System.out.println("The title name in cell 'W2' is incorrect!");
 					break;
 				case 6:
-					System.out.println("The title name in cell 'AB2' is incorrect!");
+					System.out.println("The title name in cell 'AA2' is incorrect!");
 					break;
 				default:
 					System.out.println("Unknown Error while checking excel file format!");

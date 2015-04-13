@@ -46,24 +46,30 @@ public class Import_Standard {
 	String[][] logistics_chep_data;
 	String[][] invoice_tracking_data;*/
 	
-	File file;
 	FileInputStream fis;
 	XSSFWorkbook wb;
-	File import_file = new File("");
-	Object[][] output_file_data;
+	File import_file = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Invoice Charge Import Sheet.xlsx");
+	XSSFSheet import_ws;
+	XSSFSheet output_po_ws;
+	XSSFSheet output_bulk_ws;
+	Object[][] output_po_file_data;
+	Object[][] output_bulk_file_data;
 	Object[][] import_file_data;
 	
-	public Import_Standard(File passed_import_file, File passed_output_file) {
+	public Import_Standard(File passed_output_file) {
 		
-		XLSX_Extractor extract_import = new XLSX_Extractor(passed_import_file);
+		XLSX_Extractor extract_import = new XLSX_Extractor(import_file, 0); //get extracted data from index = 0 of import file
 		this.import_file_data = extract_import.getCellData();
 		
-		XLSX_Extractor extract_output = new XLSX_Extractor(passed_output_file);
-		this.output_file_data = extract_output.getCellData();
+		XLSX_Extractor extract_output_po = new XLSX_Extractor(passed_output_file, 0); //get extracted data from sheet index = 0 of output file
+		this.output_po_file_data = extract_output_po.getCellData();
+		
+		XLSX_Extractor extract_output_bulk = new XLSX_Extractor(passed_output_file, 1); //get extracted data from sheet index = 1 of output file
+		this.output_bulk_file_data = extract_output_bulk.getCellData();
 		
 		try {
 			
-			this.fis = new FileInputStream(file);
+			this.fis = new FileInputStream(passed_output_file);
 			this.wb = new XSSFWorkbook(fis);
 			
 		}catch(FileNotFoundException err) {
@@ -72,8 +78,8 @@ public class Import_Standard {
 			err.printStackTrace();
 		}
 		
-		this.po_ws = wb.getSheetAt(0);
-		this.bulk_ws = wb.getSheetAt(1);
+		this.output_po_ws = wb.getSheetAt(0);
+		this.output_bulk_ws = wb.getSheetAt(1);
 		
 		/*XSSFRow row = ws.getRow(current_row);*/
 		importAll();
@@ -83,8 +89,8 @@ public class Import_Standard {
 	private void importAll() {
 		
 		//loop through all rows in import sheet containing value and put each row in string array
-		for(int cur_row = 0; cur_row < po_ws.getLastRowNum(); cur_row++) {
-			XSSFRow row = po_ws.getRow(cur_row);
+		for(int cur_row = 0; cur_row < output_po_ws.getLastRowNum(); cur_row++) {
+			XSSFRow row = output_po_ws.getRow(cur_row);
 			String[] data = getRow(wb, row); //put row cells from import sheet into string array
 			
 			ArrayList<Integer> matchingRows = getMatchingRowsPO(data[3]);
@@ -235,11 +241,8 @@ public class Import_Standard {
 		
 		try {
 			
-			for(int i = 1; i < bulk_ws.getLastRowNum(); i++) {
-				XSSFRow row = bulk_ws.getRow(i);
-				XSSFCell cell = row.getCell(column_index);
-				CELL_TO_STRING.setCellToString(cell.getCellType(),  cell, wb);
-				return_buffer.add(CELL_TO_STRING.getCellToString());
+			for(int i = 0; i < output_bulk_file_data.length; i++) {
+				return_buffer.add(output_bulk_file_data[i][column_index].toString());
 			}
 			
 		}catch(NullPointerException err) {
@@ -261,7 +264,7 @@ public class Import_Standard {
 			
 			for(int i = 0; i < data.size(); i++) {
 				if(search_for == data.get(i)) {
-					return_buffer.add(i);
+					return_buffer.add(i + 1); //add 1 to account for column list not including header
 				}
 			}
 			
@@ -269,7 +272,7 @@ public class Import_Standard {
 				data = getColumnListPO(34); //get ArrayList of the container numbers column in Purchase Orders Spreadsheet
 				for(int j = 0; j < data.size(); j++) {
 					if(search_for == data.get(j)) {
-						return_buffer.add(j);
+						return_buffer.add(j + 1); //add 1 to account for column list not including header
 					}
 				}
 			}
@@ -294,11 +297,8 @@ public class Import_Standard {
 		
 		try {
 			
-		    for(int cur_row = 1; cur_row < po_ws.getLastRowNum(); cur_row++) {
-		    	XSSFRow row = po_ws.getRow(cur_row);
-		    	XSSFCell cell = row.getCell(column_index);
-		    	CELL_TO_STRING.setCellToString(cell.getCellType(), cell, wb);
-		    	return_buffer.add(CELL_TO_STRING.getCellToString());
+		    for(int i = 0; i < output_po_file_data.length; i++) {
+		    	return_buffer.add(output_po_file_data[i][column_index].toString());
 		    }
 		    
 		}catch(NullPointerException err) {

@@ -19,12 +19,12 @@ public class XLSX_Extractor {
 	public static Object[][] cell_data;
 	public static Object[] column_headers;
 	
-	public XLSX_Extractor(File file)   {
+	public XLSX_Extractor(File file, int sheet_location)   {
 		try {
 		
 			FileInputStream fis = new FileInputStream(file);
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
-			XSSFSheet ws = wb.getSheetAt(0);
+			XSSFSheet ws = wb.getSheetAt(sheet_location); //finds correct sheet of workbook based on passed integer sheet_location
 			int last_row = ws.getLastRowNum() + 1; //finds number of rows in worksheet
 			int last_column = ws.getRow(0).getLastCellNum(); //finds number of columns in worksheet
 			FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();

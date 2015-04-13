@@ -13,10 +13,12 @@ import net.miginfocom.swing.MigLayout;
 
 public class Panel_Invoice_Entry_Delivery extends JPanel {
 
+	private static final long serialVersionUID = 1L;
+	
 	JTextField[] text_fields = new JTextField[7];
-	String[] label_strings= {"Invoice Company",  "Invoice Number", "Invoice Date", 
-								"Reference Number", "Charge Type", "Delivery Date",
-								"Charge Amount"};
+	String[] label_strings= {"Invoice Number",  "Invoice Company", "Invoice Date", 
+								"Reference Number", "Charge Type", "Charge Amount",
+								"Delivery Date"};
 	JLabel[] labels;
 	JButton[] buttons = new JButton[2];
 	
@@ -32,12 +34,11 @@ public class Panel_Invoice_Entry_Delivery extends JPanel {
 		for(int i = 0; i < label_strings.length; i++) {
 			labels[i] = new JLabel(label_strings[i]);
 			labels[i].setFont(new Font("Sans Serif", Font.PLAIN, 10));
-			if(i != 5)	{
+			if(i != 4)	{
 				text_fields[i] = new JTextField(15);
 			}
 			else {
-				
-				text_fields[i] = new JTextField("Delivery");
+				text_fields[i] = new JTextField("Delivery", 15);
 				text_fields[i].setEditable(false);
 			}
 			add(labels[i], "r");

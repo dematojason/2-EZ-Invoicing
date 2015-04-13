@@ -23,7 +23,7 @@ public class Spreadsheet  {
 	XLSX_Extractor excel_extractor;
 		
 		public Spreadsheet (File file) {
-			excel_extractor = new XLSX_Extractor(file);
+			excel_extractor = new XLSX_Extractor(file, 0); //second value passed = the sheet index of the file being passed.. index 0 = first tab of worksheet
 			table = new JTable(excel_extractor.getCellData(), excel_extractor.getColumnHeaders());
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			UIDefaults defaults = UIManager.getLookAndFeelDefaults();
