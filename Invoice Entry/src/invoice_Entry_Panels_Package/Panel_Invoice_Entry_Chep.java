@@ -1,5 +1,6 @@
 package invoice_Entry_Panels_Package;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,8 @@ import net.miginfocom.swing.MigLayout;
 public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
+	
+	Dimension IEC_DIMENSION = new Dimension(700,400);
 	
 	JLabel label_main_invoice_info;
 	JLabel label_main_product_breakup;
@@ -219,12 +222,14 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		if(action.equals("Cancel")) {
 			System.exit(0);
 		}else if(action.equals("Insert")) {
-			System.out.println("INSERTING.");
 			frame_to_importSheet = new Invoice_Entry_toImportSheet("Chep");
 			frame_to_importSheet.importDataChep(text_account.getText(), text_invoice_number.getText(),
 					text_invoice_date.getText(), text_reference.getText(), text_product, text_region, 
 					text_percent, text_sub_total.getText(), text_tax.getText(), text_net_total.getText());
 		}
+	}
+	public Dimension getDimension() {
+		return IEC_DIMENSION;
 	}
 	
 }

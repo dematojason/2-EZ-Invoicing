@@ -73,6 +73,7 @@ public class XLSX_Extractor {
 			String tmp = String.valueOf(xssfCell.getNumericCellValue());
 			return tmp; 
 		case 1: // cell contains string value
+			
 			return xssfCell.getRichStringCellValue().getString();
 		case 2: // cell contains formula value
 			return xssfCell.getCellFormula();
@@ -80,7 +81,7 @@ public class XLSX_Extractor {
 			return xssfCell.getStringCellValue();
 		case 4: //cell contains boolean value
 			String tmp1 = Boolean.toString(xssfCell.getBooleanCellValue());
-			return xssfCell.getBooleanCellValue();
+			return tmp1;
 		case 5: //cell contains #VAL or other error value
 			return "error";
 		default: //it should never come to this...

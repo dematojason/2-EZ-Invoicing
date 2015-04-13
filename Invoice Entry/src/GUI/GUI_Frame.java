@@ -1,6 +1,7 @@
 package GUI;
 
 import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Chep;
+import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Delivery;
 import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Standard;
 import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Warehouse;
 
@@ -118,9 +119,9 @@ public class GUI_Frame {
 						JMenuItem delivery_invoice_entry = new JMenuItem("Delivery Invoice Entry");
 						delivery_invoice_entry.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
-								Panel_Invoice_Entry_Warehouse iew_panel = new Panel_Invoice_Entry_Warehouse();
+								Panel_Invoice_Entry_Delivery ied_panel = new Panel_Invoice_Entry_Delivery();
 								content_pane.removeAll();
-								content_pane.add(iew_panel, BorderLayout.CENTER);
+								content_pane.add(ied_panel, BorderLayout.CENTER);
 								refresh_frame();
 							}
 						});
