@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -63,8 +64,11 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	String[] string_text_percentage;
 	
 	Invoice_Entry_toImportSheet frame_to_importSheet;
+	File import_file;
 	
-	public Panel_Invoice_Entry_Chep() {
+	public Panel_Invoice_Entry_Chep(File pass_import_file) {
+		
+		this.import_file = pass_import_file;
 		
 		this.label_main_invoice_info = new JLabel("Invoice Information");
 		this.label_main_product_breakup = new JLabel("Product Breakup");
@@ -224,7 +228,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		if(action.equals("Cancel")) {
 			System.exit(0);
 		}else if(action.equals("Insert")) {
-			frame_to_importSheet = new Invoice_Entry_toImportSheet("Chep");
+			frame_to_importSheet = new Invoice_Entry_toImportSheet("Chep", import_file);
 			frame_to_importSheet.importDataChep(text_account.getText(), text_invoice_number.getText(),
 					text_invoice_date.getText(), text_reference.getText(), text_product, text_region, 
 					text_percent, text_sub_total.getText(), text_tax.getText(), text_net_total.getText());

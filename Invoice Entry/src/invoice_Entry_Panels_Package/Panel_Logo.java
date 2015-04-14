@@ -12,24 +12,44 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Panel_Front extends JPanel{
-
-	private static final long serialVersionUID = 1L;
+public class Panel_Logo{
 	
 	BufferedImage ibc_logo;
+	JPanel panel;
+	JLabel pic_label;
 	
-	public Panel_Front() {
-		setLayout(new BorderLayout());
-		setPreferredSize(new Dimension(1200,800));
+	public Panel_Logo(JPanel passed_panel) {
 		
+		this.panel = passed_panel;
+		
+		panel.setLayout(new BorderLayout());
+		panel.setPreferredSize(new Dimension(1200,800));
 		try {
 			ibc_logo = ImageIO.read(new File("C:/Users/jason.demato/git/2-EZ-Invoicing/Invoice Entry/src/IBC_logo.jpg"));
 			Image scaled_image = ibc_logo.getScaledInstance(1200, 800, Image.SCALE_SMOOTH);
-			JLabel pic_label = new JLabel(new ImageIcon(scaled_image));
-			add(pic_label);
+			this.pic_label = new JLabel(new ImageIcon(scaled_image));
+			
 		}catch(IOException err) {
 			err.printStackTrace();
 		}
+		
+	}
+	
+	public void addImageLogo() {
+		
+		if(pic_label.getParent() == null) {
+			panel.add(pic_label);
+		}
+		
+	}
+	
+	
+	public void removeImageLogo() {
+		
+		if(pic_label.getParent() != null) {
+			panel.remove(pic_label);
+		}
+		
 	}
 	
 }

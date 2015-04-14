@@ -13,6 +13,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import xlsx_Extractor_Package.XLSX_Extractor;
+
 public class Invoice_Entry_toImportSheet {
 
 	/*@Override
@@ -25,9 +27,15 @@ public class Invoice_Entry_toImportSheet {
         if (e.getSource() == okButton) {*/
 
 	String sheet_type;
+	File import_file;
+	Object[][] import_file_data;
 	
-	public Invoice_Entry_toImportSheet(String import_string) {
+	public Invoice_Entry_toImportSheet(String import_string, File passed_import_file) {
 		this.sheet_type = import_string;
+		this.import_file = passed_import_file;
+		
+		XLSX_Extractor extract_output_bulk = new XLSX_Extractor(import_file, 0); //get extracted data from sheet index = 1 of output file
+		this.import_file_data = extract_output_bulk.getCellData();
 	}
 	
 	public void importDataStandard() {
@@ -52,52 +60,57 @@ public class Invoice_Entry_toImportSheet {
 				chep_invoiceEntryData_toImportSheet[z][8] = tax;
 				chep_invoiceEntryData_toImportSheet[z][9] = net_total;
 			}
-			FileInputStream fis = new FileInputStream(new File("C:\\Users\\Jdemato\\Documents\\Invoice Charge Import Sheet.xlsx"));
+			
+			//Open FileInputStream for wb
+			FileInputStream fis = new FileInputStream(import_file);
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
 			XSSFSheet ws = wb.getSheetAt(0);
 			
 			checkSheetFormat(ws); //Make sure format of Invoices Import Sheet is correct
-			
-			int last_row_with_value = ws.getLastRowNum() + 1;
 			
 			//create cell variable of type Cell for inserting new values to output sheet
 			Cell cell = null;
 			int row_count = 0;
 			int column = 0;
 			
-			if(last_row_with_value > 0) {
+		/**********************************************************************************************************************
+		* Import Data to Invoice Charges Import Sheet.xlsx
+		*/
+			
+			int last_row = import_file_data.length + 1; //add 1 to account for headers not being included
+			
+			System.out.println("last row =  " + last_row);
+			
+			if(last_row > 0) {
 				//loop beginning at last row with value + 1; for however many entries are necessary
 				//section of invoice Charge Import Sheet.xlsx
-				for(int next_row = last_row_with_value; next_row < descriptions.length + last_row_with_value; next_row++) {
+				for(int next_row = last_row; next_row < descriptions.length + last_row; next_row++) {
 					Row row = ws.createRow((short)next_row);
 					for(int x = 0; x < 10; x++) {
-						column = x + 17;
+						column = x;
 						//set cell = the next empty row (row_next), the matching output column...
-						//matching output columns for CHEP beginning @ column 18 ("S"), go until column 27 ("AB")
+						//matching output columns for CHEP beginning @ column 18 ("R"), go until column 27 ("AA")
 						//See Excel file "Invoice Charge Import Sheet.xlsx" for reference
 						if(ws.getRow(next_row) != null) {
 							cell = row.createCell((short)column);
+							cell.setCellType(Cell.CELL_TYPE_STRING); //set current cell's type to string for inputting string data
 							switch(x) {
 								case 4: //Product Description
-									cell.setCellType(Cell.CELL_TYPE_STRING); //set current cell's type to string for inputting string data
 									cell.setCellValue(descriptions[row_count].getText().toString()); //input data as string into cell
 									break;
 								case 5: //Region
-									cell.setCellType(Cell.CELL_TYPE_STRING);
 									cell.setCellValue(regions[row_count].getText().toString());
 									break;
 								case 6: //Percentages for charge break-up
-									cell.setCellType(Cell.CELL_TYPE_STRING);
-									/*divide by 100 for formatting cell to percentage
-									excel's percentage formatter multiplies the cell value by 100
-									and displays the result with the percent symbol*/
+									
 									cell.setCellValue(percentages[row_count].getText().toString());
 									break;
 								case 7: //Sub Total ($)
 								case 8: //Tax ($)
 								case 9: //Net Total ($)
-									cell.setCellType(Cell.CELL_TYPE_STRING);
 									if(chep_invoiceEntryData_toImportSheet[row_count][x] != "0") {
+										//parse % as string to % as double, divide by 100 to get percent as decimal, multiply percent as decimal
+										//by the dollar amount, parse double back to string for inputting
 										double dec = (Double.parseDouble(percentages[row_count].getText().toString()) / 100);
 										String dollar_amount = String.valueOf(dec * Double.parseDouble(chep_invoiceEntryData_toImportSheet[row_count][x]));
 										cell.setCellValue(dollar_amount);
@@ -106,7 +119,6 @@ public class Invoice_Entry_toImportSheet {
 									}
 									break;
 								default:
-									cell.setCellType(Cell.CELL_TYPE_STRING);
 									cell.setCellValue(chep_invoiceEntryData_toImportSheet[row_count][x]);
 									break;
 							}
@@ -117,16 +129,18 @@ public class Invoice_Entry_toImportSheet {
 					}
 					row_count++;
 				}
+				
 			}else{
 				System.out.println("The format of this excel file is invalid.");
 				System.exit(0);
 			}
 			
-			//format all cells to their respective formats (currency, date, percentage, etc.)
-			/*formatAllChepCells(ws, wb);*/
-			
+		/*
+		* Import Data to Invoice Charges Import Sheet.xlsx
+		**********************************************************************************************************************/
+						
 			fis.close();
-			FileOutputStream fos = new FileOutputStream(new File("C:\\Users\\Jdemato\\Documents\\Invoice Charge Import Sheet.xlsx"));
+			FileOutputStream fos = new FileOutputStream(import_file);
 			wb.write(fos);
 			fos.close();
 			wb.close();
@@ -137,7 +151,7 @@ public class Invoice_Entry_toImportSheet {
 		}catch(ArrayIndexOutOfBoundsException err) {
 			System.out.println("Array Index Out Of Bounds Exception Error:  " + err);
 			err.printStackTrace();
-		}catch(FileNotFoundException err) {
+		}catch(FileNotFoundException err) { //Most likely caused by file being open on desktop at runtime
 			System.out.println("File Not Found Exception Error:  " + err);
 			err.printStackTrace();
 		}catch(IOException err) {
@@ -192,6 +206,8 @@ public class Invoice_Entry_toImportSheet {
 		}
 	}
 	
+	@SuppressWarnings("unused")
+	//Method not necessary as sheet won't be seen by user. Will be usefule elsewhere
 	private void formatAllChepCells(XSSFSheet ws, XSSFWorkbook wb) {
 		//Changes all cells in CHEP Invoice section of sheet to their respective formats (i.e. date)
 		for(Row row : ws) {
