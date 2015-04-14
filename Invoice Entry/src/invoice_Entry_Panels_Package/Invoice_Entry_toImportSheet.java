@@ -162,7 +162,8 @@ public class Invoice_Entry_toImportSheet {
 	}
 	
 	private void checkSheetFormat(XSSFSheet ws) {
-		//Check random page titles to make sure format is correct
+		//Check random sheet titles to make sure format is correct
+		
 		int err_num = 0;
 		if(ws.getRow(1).getCell(2).toString().equalsIgnoreCase("Invoice Date") == false) { //Cell C2
 			err_num = 1;
