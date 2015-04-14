@@ -1,15 +1,41 @@
 package Import_To_Logistics_And_Invoice_Tracking;
 
+import java.io.File;
 import java.util.ArrayList;
 
-public class Workbook_Data_Searcher {
+import xlsx_Extractor_Package.XLSX_Extractor;
+
+public class Worksheet_Data {
 	
+	File file;
+	int ws_pos;
 	String[][] data;
 	
-	public Workbook_Data_Searcher(String[][] data) {
-		this.data = data;
+	public Worksheet_Data(File passed_file, int sheet_pos) {
+		
+		this.file = passed_file;
+		this.ws_pos = sheet_pos;
+		this.data = getAllData();
 		
 	}
+	
+	private String[][] getMatchingWorkSheetData(int search_col, String ref) {
+		/**********************************************************************************************************************
+		* Returns String[][] of worksheet containing reference number
+		*/
+			
+			for(int i = 0; i < dest_po_file.length; i++) { //loop through 2 destination files
+				for(int j = 0; j < 2; j++) { //loop through first 2 sheets of each destination file
+					String[][] data = getOutputWsData(j); //get import file data
+					Worksheet_Data wb_search = new Worksheet_Data(data);
+					if(wb_search.sheetIsMatch(j, ref) == true) {
+						return data;
+					}
+				}
+			}
+			return null; //no sheet found
+			
+		}
 	
 	public ArrayList<Integer> getMatchingColumnNumbers(String ref_num, int index) {
 	/**********************************************************************************************************************
@@ -31,6 +57,8 @@ public class Workbook_Data_Searcher {
 		}
 		
 	}
+	
+	
 	
 	public ArrayList<Integer> getMatchingRowNumbers(String ref_num, int index) {
 	/**********************************************************************************************************************
@@ -99,35 +127,44 @@ public class Workbook_Data_Searcher {
 		
 	}
 	
-	public boolean sheetIsMatch(int sheet_index, String ref_num) {
+	public boolean sheetIsEmpty() {
+	/**********************************************************************************************************************
+	* Returns true if certain import sheet (based on int invoice_type) is empty
+	*/
+		
+		if(getAllData().length <= 0) {
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	
+	public boolean matchFound(int column_index, String ref_num) {
 	/**********************************************************************************************************************
 	* Returns true if reference number was found in passed String[][]
 	*/
 		
-		if(sheet_index != 0 && sheet_index != 1) {
-			System.out.println("Invalid sheet index passed into method sheetIsMatch");
-			return false;	
-		}
-		
-		int search_col[] = new int[2];
-		
-		if(sheet_index == 0) { //sheet index 0 = purchase orders tab
-			search_col[0] = 11; //purchase orders column
-			search_col[1] = 34; //container numbers column
-		}else if(sheet_index == 1) { //sheet index 1 = bulk tab
-			search_col[0] = 4; //purchase orders column
-			search_col[1] = 9; //container numbers column
-		}
-		
 		//loop through rows of string data[][] searching for reference number
 		for(int i = 0; i < data.length; i++) {
-			if(data[i][search_col[0]] != ref_num && data[i][search_col[1]] != ref_num) {
-				continue; //no match
+			if(data[i][column_index] != ref_num && data[i][column_index] != ref_num) {
+				continue; //no match... YET
 			}else{
-				return true; //sheet found
+				return true; //match found
 			}
 		}
 		return false; //no match found
+	}
+	
+	private String[][] getAllData() {
+		
+		if(ws_pos != 0 && ws_pos != 1) {
+			System.out.println("Invalid integer invoice type passed into Worksheet_Data().");
+			return null;
+		}
+		XLSX_Extractor extract = new XLSX_Extractor(file, ws_pos);
+		return extract.convertObjToStringArray(extract.getCellData());
+		
 	}
 	
 }

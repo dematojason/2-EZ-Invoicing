@@ -25,7 +25,7 @@ import xlsx_Extractor_Package.XLSX_Extractor;
 public class Import_Invoice_Charges {
 	
 	//will define dest_file[] for testing. Not sure best way to handle.
-	File dest_file[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Spring 2015 Purchase Orders.xlsx"),
+	File dest_po_file[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Spring 2015 Purchase Orders.xlsx"),
 			new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Holiday 2015 Purchase Orders.xlsx")};
 	
 	//define import_file[] with 3 different invoice charge import sheets
@@ -45,7 +45,8 @@ public class Import_Invoice_Charges {
 	*/
 		
 		for(int i = 0; i < import_file.length; i++) {
-			if(importSheetIsEmpty(i) == false) {
+			Worksheet_Data sheet_data = new Worksheet_Data(import_file[i], 0);
+			if(importSheetIsEmpty(sheet_data) == false) {
 				importSheet(i);
 			}
 		}
@@ -57,8 +58,9 @@ public class Import_Invoice_Charges {
 	* Imports data from certain import sheet based on passed integer import_type
 	*/
 		
+		Worksheet_Data sheet_data = new Worksheet_Data()
 		String[][] import_data = getImportData(import_type);
-		Workbook_Data_Searcher ws_data = new Workbook_Data_Searcher(import_data);
+		Worksheet_Data ws_data = new Worksheet_Data(import_data);
 		
 		if(import_data == null) {
 			System.out.println("Error retrieving data from import Sheet (import type index = " + import_type + ")");
@@ -67,39 +69,13 @@ public class Import_Invoice_Charges {
 		
 		//loop through all rows in import sheet
 		for(int i = 0; i < import_data.length; i++) {
-			importRow(ws_data.getRowData(i), import_type); //get ArrayList<String> of current row, then pass to importRow for insertion
+			Row_Data_Importer row = new Row_Data_Importer(ws_data.getRowData(i));
+			importRow(row, import_type); //get ArrayList<String> of current row, then pass to importRow for insertion
 		}
 			
 	}
 	
-	private void importRow(ArrayList<String> passed_row, int import_type) {
-	/**********************************************************************************************************************
-	* Inserts certain row based on passed integer import_type and ArrayList passed_row
-	*/
-		
-		switch()
-		
-	}
-	
-	private String[][] getMatchingWorkSheetData(int invoice_type, String ref) {
-	/**********************************************************************************************************************
-	* Returns String[][] of worksheet containing reference number
-	*/
-		
-		for(int i = 0; i < dest_file.length; i++) { //loop through 2 destination files
-			for(int j = 0; j < 2; j++) { //loop through first 2 sheets of each destination file
-				String[][] data = getOutputWsData(j); //get import file data
-				Workbook_Data_Searcher wb_search = new Workbook_Data_Searcher(data);
-				if(wb_search.sheetIsMatch(j, ref) == true) {
-					return data;
-				}
-			}
-		}
-		return null; //no sheet found
-		
-	}
-	
-	private boolean importSheetIsEmpty(int invoice_type) {
+	private boolean sheetIsEmpty(Worksheet_Data import_sheet) {
 	/**********************************************************************************************************************
 	* Returns true if certain import sheet (based on int invoice_type) is empty
 	*/
@@ -108,21 +84,6 @@ public class Import_Invoice_Charges {
 			return true;
 		}else{
 			return false;
-		}
-		
-	}
-	
-	private String[][] getOutputWsData(int sheet_index) {
-	/**********************************************************************************************************************
-	* Calls methods getCellData() and convertObjToStringArray() to get String[][] of data from destination worksheet
-	*/
-		
-		if(sheet_index != 0 && sheet_index != 1) {
-			System.out.println("Invalid sheet index passed into Import_Invoice_Charge.getOutputWsData().");
-			return null;
-		}else{
-			XLSX_Extractor extract = new XLSX_Extractor(dest_file[sheet_index], sheet_index);
-			return extract.convertObjToStringArray(extract.getCellData());
 		}
 		
 	}
