@@ -19,6 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 
+
 import xlsx_Extractor_Package.CELL_TO_STRING;
 import xlsx_Extractor_Package.XLSX_Extractor;
 
@@ -28,8 +29,10 @@ public class Import_Invoice_Charges {
 	File dest_po_file[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Spring 2015 Purchase Orders.xlsx"),
 			new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Holiday 2015 Purchase Orders.xlsx")};
 	
+	File dest_invoice_tracking_file = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Invoice Tracking.xlsx");
+	
 	//define import_file[] with 3 different invoice charge import sheets
-	File import_file[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Standard Invoice Charge Import Sheet.xlsx"),
+	File import_files[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Standard Invoice Charge Import Sheet.xlsx"),
 			new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Chep Invoice Charge Import Sheet.xlsx")};
 		
 	public Import_Invoice_Charges(/*File[] file*/) {
@@ -44,64 +47,98 @@ public class Import_Invoice_Charges {
 	* Inserts all charges from import sheets into Purchase Order sheets and invoice tracking sheet
 	*/
 		
-		for(int i = 0; i < import_file.length; i++) {
-			Worksheet_Data sheet_data = new Worksheet_Data(import_file[i], 0);
-			if(importSheetIsEmpty(sheet_data) == false) {
-				importSheet(i);
+		for(int i = 0; i < import_files.length; i++) {
+			Worksheet_Data import_sheet = new Worksheet_Data(import_files[i], 0);
+			if(import_sheet.sheetIsEmpty() == false) {
+				importSheet(import_sheet);
 			}
 		}
 		
 	}
 	
-	private void importSheet(int import_type) {
+	private void importSheet(Worksheet_Data import_sheet) {
 	/**********************************************************************************************************************
-	* Imports data from certain import sheet based on passed integer import_type
+	* Imports data from certain import sheet
 	*/
 		
-		Worksheet_Data sheet_data = new Worksheet_Data()
-		String[][] import_data = getImportData(import_type);
-		Worksheet_Data ws_data = new Worksheet_Data(import_data);
-		
-		if(import_data == null) {
-			System.out.println("Error retrieving data from import Sheet (import type index = " + import_type + ")");
-			System.exit(0);
-		}
-		
-		//loop through all rows in import sheet
-		for(int i = 0; i < import_data.length; i++) {
-			Row_Data_Importer row = new Row_Data_Importer(ws_data.getRowData(i));
-			importRow(row, import_type); //get ArrayList<String> of current row, then pass to importRow for insertion
+		for(int i = 0; i < import_sheet.getNumberOfRows(); i++) { //for each row of import sheet
+			for(int j = 0; j < dest_po_file.length; j++) { //for each destination file
+				for(int k = 0; k < 2; k++) { //for each sheet in destination file (will only be 2: purchase order tab (tab index 0) and bulk tab (tab index 1)
+					Worksheet_Data dest_sheet_data = new Worksheet_Data(dest_po_file[j], k); //create new object of type Worksheet_Data for referencing destination worksheet
+					int[] column_index = new int[2];
+					if(k == 0) { //if current tab is "purchase orders" tab, "purchase order" column = 11 and "container number" column = 34
+						column_index[0] = 11;
+						column_index[1] = 34;
+					}else{ //if current tab is "bulk" tab, "purchase order" column = 4 and "container number" column = 9
+						column_index[0] = 4;
+						column_index[1] = 9;
+					}
+					String reference = import_sheet.getImportRowRefNum(i); //retrieve string of reference number of current row
+					String[][] matching_dest_data = dest_sheet_data.getSheetDataIfMatchFound(import_sheet.getImportRowRefNum(i), column_index);
+					if(matching_dest_data != null) { //make sure matching_dest_data was given some value
+						ArrayList<Integer> row_ints = dest_sheet_data.getMatchingRowNumbers(reference, column_index); //get rows of destination file matching reference number
+						ArrayList<String> row_data = import_sheet.getRowData(i); //get current row data
+						importCurRow(row_data, row_ints, dest_sheet_data); //pass current row's data and list of matching integers into method importCurRow for final importing
+					}
+				}
+			}
 		}
 			
 	}
 	
-	private boolean sheetIsEmpty(Worksheet_Data import_sheet) {
-	/**********************************************************************************************************************
-	* Returns true if certain import sheet (based on int invoice_type) is empty
-	*/
+	private void importCurRow(ArrayList<String> row_data, ArrayList<Integer> row_ints, Worksheet_Data dest_sheet_data) {
 		
-		if(getImportData(invoice_type).length <= 0) {
-			return true;
-		}else{
-			return false;
+		for(int i = 0; i < row_ints.size(); i++) { //for each matching row in destination sheet
+			
+			ArrayList<String> cur_row_data = dest_sheet_data.getRowData(i);
 		}
+		
+		ArrayList<String> po_row = populatePoRowArrayList();
+		
+		ArrayList<String> invoice_tracking_row = populateInvoiceTrackingRowArrayList();
+		
+		Worksheet_Data invoice_tracking_sheet = new Worksheet_Data(dest_invoice_tracking_file, 0);
+		int row_index = invoice_tracking_sheet.getNumberOfRows();
+		
+		
 		
 	}
 	
-	private String[][] getImportData(int invoice_type) {
-	/**********************************************************************************************************************
-	* Calls methods getCellData(0 and converObjToStringArray() to get String[][] of data from import worksheet
-	*/
+	private ArrayList<String> populatePoRowArrayList(int po_sheet_index, ArrayList<String> dest_po_row, ArrayList<String> invoice_tracking_row) {
 		
-		if(invoice_type != 0 && invoice_type != 1) {
-			System.out.println("Invalid integer invoice type passed into Import_Invoice_Charge.getImportData().");
-			return null;
-		}
-		XLSX_Extractor extract = new XLSX_Extractor(import_file[invoice_type], 0);
-		return extract.convertObjToStringArray(extract.getCellData());
 		
+		
+		/*
+		 * 0 = invoice number
+		 * 1 = invoice company
+		 * 2 = invoice date
+		 * 3 = charge type
+		 * 4 = existing charge amount
+		 * 5 = final charge amount
+		 * 6 = Delivery Date (If Delivery)
+		 * 7 = Entry Date
+		 * 8 = Notes
+		 * 
+		 * 9 = Product Reference #
+		 * 10 = Vendor Name
+		 * 11 = Region
+		 * 12 = Delivery Date/Port ETA
+		 * 13 = Workbook
+		 * 14 = Sheet
+		 * 
+		 */
+		
+		
+		
+		return null;
 	}
 	
+	private ArrayList<String> populateInvoiceTrackingRowArrayList(ArrayList<String> import_data, ArrayList<String> po_sheet_row_data) {
+		
+		
+		return null;
+	}
+		
 	private String getActualChargeValue(String charge_amount, int number_of_matching_rows) {
 	/**********************************************************************************************************************
 	* Returns actual charge amount for each row
@@ -115,36 +152,82 @@ public class Import_Invoice_Charges {
 		
 	}
 	
-	private int getChargeColumnNum(String charge_type) {
+	private int getChargeColumnNum(String charge_type, int tab_index) {
 	/**********************************************************************************************************************
 	* Returns the column number where the charge will be entered into the purchase orders spreadsheet
 	*/
 		
-		switch(charge_type) {
-			case "Ocean Freight":
-				return 14;
-			case "Documentation":
-				return 15;
-			case "Clearance":
-				return 16;
-			case "Duty":
-				return 17;
-			case "GST":
-				return 18;
-			case "Warehouse":
-				return 19;
-			case "Drayage":
-				return 20;
-			case "Delivery":
-				return 21;
-			case "Inland Europe":
-				return 22;
-			case "Miscellaneous":
-				return 23;
-			default:
-				System.out.println("No bueno... could not read charge type");
-				System.exit(0);
-				return 0;
+		if(tab_index != 0 && tab_index != 1) {
+			System.out.println("Invalid tab index entered into method getChargeColumnNum.");
+			System.exit(0);
+			return 0;
+		}else{
+			switch(charge_type) {
+				case "Ocean Freight":
+					if(tab_index == 0) { //purchase order tab
+						return 14;
+					}else{ //bulk tab
+						return 10;
+					}
+				case "Documentation":
+					if(tab_index == 0) { //purchase order tab
+						return 15;
+					}else{ //bulk tab
+						return 11;
+					}
+				case "Clearance":
+					if(tab_index == 0) { //purchase order tab
+						return 16;
+					}else{ //bulk tab
+						return 12;
+					}
+				case "Duty":
+					if(tab_index == 0) { //purchase order tab
+						return 17;
+					}else{ //bulk tab
+						return 13;
+					}
+				case "GST":
+					if(tab_index == 0) { //purchase order tab
+						return 18;
+					}else{ //bulk tab
+						return 14;
+					}
+				case "Warehouse":
+					if(tab_index == 0) { //purchase order tab
+						return 19;
+					}else{ //bulk tab
+						return 15;
+					}
+				case "Drayage":
+					if(tab_index == 0) { //purchase order tab
+						return 20;
+					}else{ //bulk tab
+						return 16;
+					}
+				case "Delivery":
+					if(tab_index == 0) { //purchase order tab
+						return 21;
+					}else{ //bulk tab
+						return 17;
+					}
+				case "Miscellaneous":
+					if(tab_index == 0) { //purchase order tab
+						return 22;
+					}else{ //bulk tab
+						return 18;
+					}
+				case "Inland Europe":
+					if(tab_index == 0) { //purchase order tab
+						return 23;
+					}else{ //bulk tab
+						return 19;
+					}
+				default:
+					System.out.println("No bueno... could not read charge type");
+					System.exit(0);
+					return 0;
+			}
 		}
 		
 	}

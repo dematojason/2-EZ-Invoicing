@@ -19,16 +19,14 @@ public class Worksheet_Data {
 		
 	}
 	
-	private String[][] getMatchingWorkSheetData(int search_col, String ref) {
-		/**********************************************************************************************************************
-		* Returns String[][] of worksheet containing reference number
-		*/
+	public String[][] getSheetDataIfMatchFound(String ref, int search_col[]) {
+	/**********************************************************************************************************************
+	* Returns String[][] of worksheet containing reference number
+	*/
 			
-			for(int i = 0; i < dest_po_file.length; i++) { //loop through 2 destination files
-				for(int j = 0; j < 2; j++) { //loop through first 2 sheets of each destination file
-					String[][] data = getOutputWsData(j); //get import file data
-					Worksheet_Data wb_search = new Worksheet_Data(data);
-					if(wb_search.sheetIsMatch(j, ref) == true) {
+			for(int i = 0; i < data.length; i++) {
+				for(int j = 0; j < search_col.length; j++) {
+					if(ref == data[i][j]) {
 						return data;
 					}
 				}
@@ -58,21 +56,20 @@ public class Worksheet_Data {
 		
 	}
 	
-	
-	
-	public ArrayList<Integer> getMatchingRowNumbers(String ref_num, int index) {
+	public ArrayList<Integer> getMatchingRowNumbers(String ref_num, int index[]) {
 	/**********************************************************************************************************************
-	* Returns any matching rows based on int index (column) and String search_for (what will be searched for)
+	* Returns row indexes where match is found based on int index (column) and String search_for (what will be searched for)
 	*/
 		
 		ArrayList<Integer> matching = new ArrayList<Integer>();
 		
-		for(int i = 0; i < data.length; i++) {
-			if(data[i][index] == ref_num) {
-				matching.add(i + 1);
+		for(int j = 0; j < data.length; j++) { //loop through rows of data being searched
+			for(int i = 0; i < index.length; i++) { //loop through specified columns data current row
+				if(data[j][index[i]] == ref_num) { //if match is found
+					matching.add(j + 1); //add row index number to ArrayList being returned 
+				}
 			}
 		}
-		//return null if there were no items added to ArrayList
 		if(matching.size() > 0) {
 			return matching;
 		}else{
@@ -104,6 +101,70 @@ public class Worksheet_Data {
 		
 	}
 	
+	public boolean sheetIsEmpty() {
+	/**********************************************************************************************************************
+	* Returns true if certain import sheet (based on int invoice_type) is empty
+	*/
+		
+		if(data.length <= 0) {
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	
+	public boolean matchFound(int column_index, String ref_num) {
+	/**********************************************************************************************************************
+	* Returns true if reference number was found
+	*/
+		
+		//loop through rows of string data[][] searching for reference number
+		for(int i = 0; i < data.length; i++) {
+			if(data[i][column_index] != ref_num && data[i][column_index] != ref_num) {
+				continue; //no match... YET
+			}else{
+				return true; //match found
+			}
+		}
+		return false; //no match found
+	}
+	
+	public String getImportRowRefNum(ArrayList<String> row_data) {
+	/**********************************************************************************************************************
+	* Returns reference number (Column "F") of specified row in sheet using passed ArrayList of row data
+	*/	
+		return row_data.get(5);
+	}
+	
+	public String getImportRowRefNum(int row_index) {
+	/**********************************************************************************************************************
+	* Returns reference number (Column "F") of specified row in sheet using passed row_index
+	*/		
+		return data[row_index][5];
+	}
+	
+	public int getNumberOfRows() {
+	/**********************************************************************************************************************
+	* Returns length of first index of data[][]
+	*/
+		return data.length;
+	}
+	
+	public int getNumberOfColumns() {
+	/**********************************************************************************************************************
+	* Returns length of second index of data[][]
+	*/
+		return data[0].length;
+	}
+	
+	public int getNumberOfColumns(int index) {
+	/**********************************************************************************************************************
+	* Returns length of second index of data[][] for the given row (int index passed to function)
+	*/	
+		return data[index].length;
+	}
+	
 	public ArrayList<String> getRowData(int index) {
 	/**********************************************************************************************************************
 	* Returns all string values in the passed row index as an ArrayList<String>
@@ -127,38 +188,12 @@ public class Worksheet_Data {
 		
 	}
 	
-	public boolean sheetIsEmpty() {
-	/**********************************************************************************************************************
-	* Returns true if certain import sheet (based on int invoice_type) is empty
-	*/
-		
-		if(getAllData().length <= 0) {
-			return true;
-		}else{
-			return false;
-		}
-		
-	}
-	
-	public boolean matchFound(int column_index, String ref_num) {
-	/**********************************************************************************************************************
-	* Returns true if reference number was found in passed String[][]
-	*/
-		
-		//loop through rows of string data[][] searching for reference number
-		for(int i = 0; i < data.length; i++) {
-			if(data[i][column_index] != ref_num && data[i][column_index] != ref_num) {
-				continue; //no match... YET
-			}else{
-				return true; //match found
-			}
-		}
-		return false; //no match found
-	}
-	
 	private String[][] getAllData() {
+	/**********************************************************************************************************************
+	* Returns all data from passed file's sheet as String[][]
+	*/
 		
-		if(ws_pos != 0 && ws_pos != 1) {
+		if(ws_pos != 0 && ws_pos != 1 && ws_pos != 2) {
 			System.out.println("Invalid integer invoice type passed into Worksheet_Data().");
 			return null;
 		}
