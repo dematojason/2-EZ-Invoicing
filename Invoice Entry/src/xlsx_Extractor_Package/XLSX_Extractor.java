@@ -53,16 +53,16 @@ public class XLSX_Extractor {
 		}
 	}
 	public static void get_cell_data(XSSFSheet ws, int last_column, int last_row) {
-			XSSFCell this_cell = null;
-			XSSFRow row = null;
-			for(int i = 1; i < last_row+1; i++) {
-				for(int j = 0; j < last_column+1; j++) {
-					row = ws.getRow(i);
-					this_cell = row.getCell(j);
-					if(this_cell != null)
-					cell_data[i][j] = cellToString(this_cell);
-				}
+		XSSFCell this_cell = null;
+		XSSFRow row = null;
+		for(int i = 1; i < last_row+1; i++) {
+			for(int j = 0; j < last_column+1; j++) {
+				row = ws.getRow(i);
+				this_cell = row.getCell(j);
+				if(this_cell != null)
+				cell_data[i][j] = cellToString(this_cell);
 			}
+		}
 	}
 	private static Object cellToString(XSSFCell xssfCell) {
 		
