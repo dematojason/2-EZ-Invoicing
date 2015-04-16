@@ -1,48 +1,49 @@
 package GUI;
 
+import invoice_Entry_Panels_Package.Panel_Logo;
 import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Chep;
+import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Delivery;
 import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Standard;
-import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Warehouse;
+/*import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Warehouse;*/
+
 
 import java.io.*;
-import java.util.*;
 
 import javax.swing.*;
 
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import xlsx_Extractor_Package.*;
-
 import java.awt.*;
 import java.awt.event.*;
-
-
 
 public class GUI_Frame {
 		
 		JFrame frame;
 		JPanel content_pane;
 		JFileChooser file_chooser;
+		Panel_Logo ibc_logo;
+		File import_file = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Invoice Charge Import Sheet.xlsx");
 		
 		public GUI_Frame() {
 				frame_setup();
 				menu_bar_setup();
 		}
 		
-		public void frame_setup()	{
+		public void frame_setup() {
 				frame = new JFrame("ASM");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				content_pane = new JPanel();
-				content_pane.setLayout(new BorderLayout());	
+				//*************Issues with adding/removing logo... Commented out for now
+				/*ibc_logo = new Panel_Logo(content_pane);
+				ibc_logo.addImageLogo(); //add logo to content panel*/
+				content_pane.setLayout(new BorderLayout());
 				content_pane.setPreferredSize(new Dimension(1200,800));
 				frame.setContentPane(content_pane);
+				frame.pack();
+				frame.setLocationRelativeTo(null); //center frame
 				frame.setVisible(true);
 				refresh_frame();
 		}
 		
-		public void menu_bar_setup()	{
+		public void menu_bar_setup() {
 				
 				//Menubar
 				JMenuBar menu_bar = new JMenuBar();
@@ -88,8 +89,6 @@ public class GUI_Frame {
 						
 						file_menu.add(open_file);
 						file_menu.add(close_file);
-						
-				
 				
 				/**********************************************************************************************************************
 				* Create an invoice menu
@@ -99,7 +98,7 @@ public class GUI_Frame {
 						JMenuItem CHEP_invoice_entry = new JMenuItem("CHEP Invoice Entry");
 						CHEP_invoice_entry.addActionListener(new ActionListener() {	
 								public void actionPerformed(ActionEvent e)	{
-									Panel_Invoice_Entry_Chep iec_panel = new Panel_Invoice_Entry_Chep();
+									Panel_Invoice_Entry_Chep iec_panel = new Panel_Invoice_Entry_Chep(import_file);
 									content_pane.removeAll();
 									content_pane.add(iec_panel, BorderLayout.CENTER);
 									refresh_frame();
@@ -118,9 +117,9 @@ public class GUI_Frame {
 						JMenuItem delivery_invoice_entry = new JMenuItem("Delivery Invoice Entry");
 						delivery_invoice_entry.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
-								Panel_Invoice_Entry_Warehouse iew_panel = new Panel_Invoice_Entry_Warehouse();
+								Panel_Invoice_Entry_Delivery ied_panel = new Panel_Invoice_Entry_Delivery();
 								content_pane.removeAll();
-								content_pane.add(iew_panel, BorderLayout.CENTER);
+								content_pane.add(ied_panel, BorderLayout.CENTER);
 								refresh_frame();
 							}
 						});
@@ -145,9 +144,10 @@ public class GUI_Frame {
 						invoice_menu.add(delivery_invoice_entry);
 						// invoice_menu.add(nonapproved_invoice_entry);
 						// invoice_menu.add(approve_nonapproved_invoice_entry);
-				/**********************************************************************************************************************
+						
+				/*
 				* Create an invoice menu
-				*/
+				**********************************************************************************************************************/
 				
 				/**********************************************************************************************************************
 				* Search an invoice menu
@@ -193,9 +193,9 @@ public class GUI_Frame {
 						search_invoice_menu.add(container_number);
 						search_invoice_menu.add(company_name);
 						
-				/**********************************************************************************************************************
+				/*
 				* Search an invoice menu
-				*/
+				**********************************************************************************************************************/
 				
 				JMenu search_logisitics = new JMenu("Search Logistics");
 				
@@ -211,6 +211,9 @@ public class GUI_Frame {
 		}
 		
 		public void refresh_frame()	{
+			//*************Issues with adding/removing logo... Commented out for now
+			/*Panel_Logo ibc_logo_remove = new Panel_Logo(content_pane);
+			ibc_logo_remove.removeImageLogo(); //remove image from panel*/			
 			frame.pack();
 			frame.revalidate();
 			frame.repaint();

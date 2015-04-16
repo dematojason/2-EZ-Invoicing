@@ -19,13 +19,13 @@ public class XLSX_Extractor {
 	public static Object[][] cell_data;
 	public static Object[] column_headers;
 	
-	public XLSX_Extractor(File file)   {
+	public XLSX_Extractor(File file, int sheet_location)   {
 		try {
 		
 			FileInputStream fis = new FileInputStream(file);
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
-			XSSFSheet ws = wb.getSheetAt(0);
-			int last_row = ws.getLastRowNum() + 1; //finds number of rows in worksheet
+			XSSFSheet ws = wb.getSheetAt(sheet_location); //finds correct sheet of workbook based on passed integer sheet_location
+			int last_row = getActualLastRowNum(ws) + 1; //finds number of rows containing value in worksheet
 			int last_column = ws.getRow(0).getLastCellNum(); //finds number of columns in worksheet
 			FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 			evaluator.evaluateAll();
@@ -47,9 +47,9 @@ public class XLSX_Extractor {
 		for(int i = 0; i < last_column; i++) {
 			row = ws.getRow(0);
 			this_cell = row.getCell(i);
-			if(this_cell != null) 
+			if(this_cell != null) {
 				column_headers[i] = cellToString(this_cell);
-		
+			}
 		}
 	}
 	public static void get_cell_data(XSSFSheet ws, int last_column, int last_row) {
@@ -71,6 +71,7 @@ public class XLSX_Extractor {
 			String tmp = String.valueOf(xssfCell.getNumericCellValue());
 			return tmp; 
 		case 1: // cell contains string value
+			
 			return xssfCell.getRichStringCellValue().getString();
 		case 2: // cell contains formula value
 			return xssfCell.getCellFormula();
@@ -86,6 +87,36 @@ public class XLSX_Extractor {
 		}
 		
 	}
+	
+	public static int getActualLastRowNum(XSSFSheet ws) {
+		
+		for(int i = 0; i < ws.getLastRowNum(); i++) {
+			for(int j = 0; j < ws.getRow(i).getLastCellNum(); j++) {
+				XSSFCell cell = ws.getRow(i).getCell(j);
+				if(cell != null) {
+					break;
+				}else if(j == ws.getRow(i).getLastCellNum() - 1) { //if last cell in column
+					return i - 1; //return the row before current row (last row containing value)
+				}
+			}
+		}
+		
+		return 0;
+		
+	}
+	
+	public String[][] convertObjToStringArray(Object[][] obj) {
+		
+		String[][] str = new String[obj.length][obj[0].length];
+		for(int i = 0; i < obj.length; i++) {
+			for(int j = 0; j < obj[0].length; j++) {
+				str[i][j] = obj[i][j].toString();
+			}
+		}
+		return str;
+		
+	}
+	
 	public static void test_print_2D_string_array(String[][] string_array, int index0_length, int index1_length) {
 		
 		for(int i = 0; i < index0_length; i++) {

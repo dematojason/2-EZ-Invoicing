@@ -1,8 +1,10 @@
 package invoice_Entry_Panels_Package;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -15,6 +17,8 @@ import net.miginfocom.swing.MigLayout;
 public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
+	
+	Dimension iec_dimension = new Dimension(700,400);
 	
 	JLabel label_main_invoice_info;
 	JLabel label_main_product_breakup;
@@ -60,8 +64,11 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	String[] string_text_percentage;
 	
 	Invoice_Entry_toImportSheet frame_to_importSheet;
+	File import_file;
 	
-	public Panel_Invoice_Entry_Chep() {
+	public Panel_Invoice_Entry_Chep(File pass_import_file) {
+		
+		this.import_file = pass_import_file;
 		
 		this.label_main_invoice_info = new JLabel("Invoice Information");
 		this.label_main_product_breakup = new JLabel("Product Breakup");
@@ -95,6 +102,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	public void getInvoiceEntry_Chep() {
 		/*Custom_Functions my_frame = new Custom_Functions();*/
 		setLayout(new MigLayout());
+		setPreferredSize(iec_dimension);
 		
 		//add action listeners to JButtons
 		button_cancel.addActionListener(this);
@@ -192,6 +200,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 			add(button_insert, "tag ok, span, split 2, sizegroup bttn");
 			add(button_cancel, "tag cancel, sizegroup bttn");
 			
+			
 			/*frame.setResizable(true);
 			frame.add(panel);
 			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -219,12 +228,14 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		if(action.equals("Cancel")) {
 			System.exit(0);
 		}else if(action.equals("Insert")) {
-			System.out.println("INSERTING.");
-			frame_to_importSheet = new Invoice_Entry_toImportSheet("Chep");
+			frame_to_importSheet = new Invoice_Entry_toImportSheet("Chep", import_file);
 			frame_to_importSheet.importDataChep(text_account.getText(), text_invoice_number.getText(),
 					text_invoice_date.getText(), text_reference.getText(), text_product, text_region, 
 					text_percent, text_sub_total.getText(), text_tax.getText(), text_net_total.getText());
 		}
+	}
+	public Dimension getDimension() {
+		return iec_dimension;
 	}
 	
 }
