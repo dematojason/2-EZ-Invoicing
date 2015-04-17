@@ -10,6 +10,23 @@ public class Dat_Standard_Import_Row {
 		this.dis_row = pass_dat_row;
 	}
 	
+	public ArrayList<String> getCodingInfo() {
+		ArrayList<String> codingInfo = new ArrayList<String>();
+		
+		codingInfo.add("Invoice Number:  " + getInvoiceNumber());
+		codingInfo.add("Invoice Company:  " + getInvoiceCompany());
+		codingInfo.add("Invoice Date:  " + getInvoiceDate());
+		codingInfo.add("Product Reference Number" + getReferenceNumber());
+		codingInfo.add("Vendor:  " + getVendorName());
+		codingInfo.add("Region:  " + getRegion());
+		codingInfo.add("Charge Type:  " + getChargeType());
+		codingInfo.add("Charge Amount: " + getChargeTotalAmount());
+		codingInfo.add("Workbook:  " + getRowWorkbook());
+		codingInfo.add("Sheet:  " + getRowSheet());
+		
+		return codingInfo;
+	}
+	
 	public String getInvoiceNumber() {
 		return dis_row.get(0);
 	}

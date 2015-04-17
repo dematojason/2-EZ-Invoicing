@@ -29,7 +29,7 @@ public class Import_Invoice_Charges {
 	File dest_po_file[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Spring 2015 Purchase Orders.xlsx"),
 			new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Holiday 2015 Purchase Orders.xlsx")};
 	
-	File dest_invoice_tracking_file = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Invoice Tracking.xlsx");
+	File invoice_tracking_file = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Invoice Tracking.xlsx");
 	
 	//define import_file[] with 3 different invoice charge import sheets
 	File import_files[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Standard Invoice Charge Import Sheet.xlsx"),
@@ -62,9 +62,15 @@ public class Import_Invoice_Charges {
 	*/
 		
 		for(int i = 0; i < import_sheet.getNumberOfRows(); i++) { //for each row of import sheet
+			Worksheet_Data invoice_tracking_wb = new Worksheet_Data(invoice_tracking_file, 0);
+			String[][] invoice_tracking_data = invoice_tracking_wb.getAllData();
+			if(invoice_tracking_data == null) {
+				System.out.println("There was an error while attempting to retrieve data from the invoice tracking excel file.");
+				System.exit(0);
+			}
 			for(int j = 0; j < dest_po_file.length; j++) { //for each destination file
-				for(int k = 0; k < 2; k++) { //for each sheet in destination file (will only be 2: purchase order tab (tab index 0) and bulk tab (tab index 1)
-					Worksheet_Data dest_sheet_data = new Worksheet_Data(dest_po_file[j], k); //create new object of type Worksheet_Data for referencing destination worksheet
+				for(int k = 0; k < 2; k++) { //for each sheet in destination file (will only be 2 for each file: purchase order tab (tab index 0) and bulk tab (tab index 1)
+					Worksheet_Data dest_po_data = new Worksheet_Data(dest_po_file[j], k); //create new object of type Worksheet_Data for referencing destination worksheet
 					int[] column_index = new int[2];
 					if(k == 0) { //if current tab is "purchase orders" tab, "purchase order" column = 11 and "container number" column = 34
 						column_index[0] = 11;
@@ -73,12 +79,13 @@ public class Import_Invoice_Charges {
 						column_index[0] = 4;
 						column_index[1] = 9;
 					}
-					String reference = import_sheet.getImportRowRefNum(i); //retrieve string of reference number of current row
-					String[][] matching_dest_data = dest_sheet_data.getSheetDataIfMatchFound(import_sheet.getImportRowRefNum(i), column_index);
-					if(matching_dest_data != null) { //make sure matching_dest_data was given some value
-						ArrayList<Integer> row_ints = dest_sheet_data.getMatchingRowNumbers(reference, column_index); //get rows of destination file matching reference number
+					String reference_number = import_sheet.getImportRowRefNum(i); //retrieve string of reference number of current row
+					String[][] matching_po_sheet_data = dest_po_data.getSheetDataIfMatchFound(import_sheet.getImportRowRefNum(i), column_index);
+					
+					if(matching_po_sheet_data != null) { //make sure matching_dest_data was given some value
+						ArrayList<Integer> row_ints = dest_po_data.getMatchingRowNumbers(reference_number, column_index); //get rows of destination file matching reference number
 						ArrayList<String> row_data = import_sheet.getRowData(i); //get current row data
-						importCurRow(row_data, row_ints, dest_sheet_data); //pass current row's data and list of matching integers into method importCurRow for final importing
+						importCurRow(row_data, row_ints, invoice_tracking_data.length, dest_po_data, j, k); //pass current row's data and list of matching integers into method importCurRow for final importing
 					}
 				}
 			}
@@ -86,57 +93,31 @@ public class Import_Invoice_Charges {
 			
 	}
 	
-	private void importCurRow(ArrayList<String> row_data, ArrayList<Integer> row_ints, Worksheet_Data dest_sheet_data) {
+	private void importCurRow(ArrayList<String> row_data, ArrayList<Integer> row_ints, int next_invoice_tracking_row, Worksheet_Data dest_sheet_data, int po_file_index, int po_sheet_index) {
 		
+		Dat_Standard_Import_Row cur_row = new Dat_Standard_Import_Row(row_data);
 		for(int i = 0; i < row_ints.size(); i++) { //for each matching row in destination sheet
-			
-			ArrayList<String> cur_row_data = dest_sheet_data.getRowData(i);
+			try{
+				if(cur_row.getChargeType() != "Delivery") {
+					if(po_sheet_index == 0) {
+						XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(dest_po_file[po_file_index]));
+						XSSFSheet ws = wb.getSheetAt(po_sheet_index);
+						Row row = ws.getRow(row_ints.get(i));
+						Cell cell = row.getCell(arg0)
+					}
+				}
+			}catch(FileNotFoundException err) {
+				System.out.println("There was an error while attempting to open the destination purchase orders file.");
+				err.printStackTrace();
+			}catch(IOException err) {
+				System.out.println("There was an error while attempting to open the destination purchase orders file.");
+				err.printStackTrace();
+			}
+			insertCharge(cur_row.getChargeType(), cur_row.getChargeTotalAmount(), po_file_index, po_sheet_index);
 		}
+		//Worksheet_Data invoice_tracking_sheet = new Worksheet_Data(dest_invoice_tracking_file, 0);
+		//int row_index = invoice_tracking_sheet.getNumberOfRows();
 		
-		ArrayList<String> po_row = populatePoRowArrayList();
-		
-		ArrayList<String> invoice_tracking_row = populateInvoiceTrackingRowArrayList();
-		
-		Worksheet_Data invoice_tracking_sheet = new Worksheet_Data(dest_invoice_tracking_file, 0);
-		int row_index = invoice_tracking_sheet.getNumberOfRows();
-		
-		
-		
-	}
-	
-	private ArrayList<String> populatePoRowArrayList(int po_sheet_index, ArrayList<String> dest_po_row, ArrayList<String> invoice_tracking_row) {
-		
-		
-		
-		/*
-		 * 0 = invoice number
-		 * 1 = invoice company
-		 * 2 = invoice date
-		 * 3 = charge type
-		 * 4 = existing charge amount
-		 * 5 = final charge amount
-		 * 6 = Delivery Date (If Delivery)
-		 * 7 = Entry Date
-		 * 8 = Notes
-		 * 
-		 * 9 = Product Reference #
-		 * 10 = Vendor Name
-		 * 11 = Region
-		 * 12 = Delivery Date/Port ETA
-		 * 13 = Workbook
-		 * 14 = Sheet
-		 * 
-		 */
-		
-		
-		
-		return null;
-	}
-	
-	private ArrayList<String> populateInvoiceTrackingRowArrayList(ArrayList<String> import_data, ArrayList<String> po_sheet_row_data) {
-		
-		
-		return null;
 	}
 		
 	private String getActualChargeValue(String charge_amount, int number_of_matching_rows) {
