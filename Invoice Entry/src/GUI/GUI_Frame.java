@@ -1,10 +1,7 @@
 package GUI;
 
-import invoice_Entry_Panels_Package.Panel_Logo;
-import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Chep;
-import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Delivery;
-import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Standard;
-/*import invoice_Entry_Panels_Package.Panel_Invoice_Entry_Warehouse;*/
+import invoice_Entry_Panels_Package.*;
+
 
 
 import java.io.*;
@@ -17,9 +14,9 @@ import java.awt.event.*;
 public class GUI_Frame {
 		
 		JFrame frame;
-		JPanel content_pane;
+		Background_Panel content_pane;
 		JFileChooser file_chooser;
-		Panel_Logo ibc_logo;
+		
 		File import_file = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Invoice Charge Import Sheet.xlsx");
 		
 		public GUI_Frame() {
@@ -28,19 +25,13 @@ public class GUI_Frame {
 		}
 		
 		public void frame_setup() {
-				frame = new JFrame("ASM");
+				frame = new JFrame("2EZ Invoicing");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				content_pane = new JPanel();
-				//*************Issues with adding/removing logo... Commented out for now
-				/*ibc_logo = new Panel_Logo(content_pane);
-				ibc_logo.addImageLogo(); //add logo to content panel*/
-				content_pane.setLayout(new BorderLayout());
-				content_pane.setPreferredSize(new Dimension(1200,800));
+				content_pane = new Background_Panel();
 				frame.setContentPane(content_pane);
 				frame.pack();
 				frame.setLocationRelativeTo(null); //center frame
 				frame.setVisible(true);
-				refresh_frame();
 		}
 		
 		public void menu_bar_setup() {
@@ -97,30 +88,44 @@ public class GUI_Frame {
 					
 						JMenuItem CHEP_invoice_entry = new JMenuItem("CHEP Invoice Entry");
 						CHEP_invoice_entry.addActionListener(new ActionListener() {	
-								public void actionPerformed(ActionEvent e)	{
-									Panel_Invoice_Entry_Chep iec_panel = new Panel_Invoice_Entry_Chep(import_file);
-									content_pane.removeAll();
-									content_pane.add(iec_panel, BorderLayout.CENTER);
-									refresh_frame();
-								}
+							public void actionPerformed(ActionEvent e)	{
+								Panel_Invoice_Entry_Chep iec_panel = new Panel_Invoice_Entry_Chep(import_file);
+								JOptionPane.showOptionDialog(null, 
+										iec_panel,
+										"CHEP Invoice Entry",
+										JOptionPane.DEFAULT_OPTION,
+										JOptionPane.INFORMATION_MESSAGE, 
+									    null,
+									    new Object[]{},
+									    null);
+							}
 						});
 						
 						JMenuItem standard_invoice_entry = new JMenuItem("IBC / Nature's Intent Invoice Entry");
 						standard_invoice_entry.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								Panel_Invoice_Entry_Standard ies_panel = new Panel_Invoice_Entry_Standard();
-								content_pane.removeAll();
-								content_pane.add(ies_panel, BorderLayout.CENTER);
-								refresh_frame();
+								JOptionPane.showOptionDialog(null, 
+										ies_panel,"IBC / Nature's Intent Invoice Entry", 
+										JOptionPane.DEFAULT_OPTION,
+										JOptionPane.INFORMATION_MESSAGE, 
+										null,
+										new Object[]{}, 
+										null);
 							}
 						});
 						JMenuItem delivery_invoice_entry = new JMenuItem("Delivery Invoice Entry");
 						delivery_invoice_entry.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								Panel_Invoice_Entry_Delivery ied_panel = new Panel_Invoice_Entry_Delivery();
-								content_pane.removeAll();
-								content_pane.add(ied_panel, BorderLayout.CENTER);
-								refresh_frame();
+								JOptionPane.showOptionDialog(null, 
+										ied_panel,
+										"Chep Panel", 
+										JOptionPane.DEFAULT_OPTION,
+										JOptionPane.INFORMATION_MESSAGE, 
+										null, 
+										new Object[]{}, 
+										null);
 							}
 						});
 						
@@ -210,19 +215,20 @@ public class GUI_Frame {
 				
 		}
 		
-		public void refresh_frame()	{
-			//*************Issues with adding/removing logo... Commented out for now
-			/*Panel_Logo ibc_logo_remove = new Panel_Logo(content_pane);
-			ibc_logo_remove.removeImageLogo(); //remove image from panel*/			
+		public void refresh_frame()	{		
 			frame.pack();
 			frame.revalidate();
 			frame.repaint();
 			content_pane.revalidate();
 		}
 		
-		public static void main(String[] args) throws IOException {
+		public static void main(String[] args) { 
+			
+			double time_elasped;
 			
 			GUI_Frame gui = new GUI_Frame();
+			
+			
 		}
 	
 }
