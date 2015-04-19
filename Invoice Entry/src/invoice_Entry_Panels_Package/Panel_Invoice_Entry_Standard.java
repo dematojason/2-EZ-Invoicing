@@ -149,8 +149,8 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 				data[i][4] = charge_amount[i].getText();
 				data[i][5] = text_reference.getText();
 			}
-			transfer_to_import_sheet = new Invoice_Entry_toImportSheet(data);
-			transfer_to_import_sheet.importDataStandard();
+			transfer_to_import_sheet = new Invoice_Entry_toImportSheet();
+			transfer_to_import_sheet.importDataStandard(data);
 		}
 	}
 	

@@ -28,15 +28,13 @@ public class Invoice_Entry_toImportSheet {
 
 	File chep_import_file = new File("C:/Users/Jdemato/Documents/Chep Invoice Charge Import Sheet.xlsx");
 	File standard_import_file = new File("C:/Users/Jdemato/Documents/Standard Invoice Charge Import Sheet.xlsx");
-	Object[][] import_file_data;
 	
-	public Invoice_Entry_toImportSheet(String[][] data) {
-		
-		this.import_file_data = data;
+	
+	public Invoice_Entry_toImportSheet() {
 		
 	}
 	
-	public void importDataStandard() {
+	public void importDataStandard(String[][] data) {
 		
 	}
 	
@@ -46,7 +44,7 @@ public class Invoice_Entry_toImportSheet {
 			String sub_total, String tax, String net_total) {
 		
 		XLSX_Extractor extract_output_bulk = new XLSX_Extractor(chep_import_file, 0);
-		this.import_file_data = extract_output_bulk.getCellData();
+		Object[][] import_file_data = extract_output_bulk.getCellData();
 		
 		try {
 			//store passed data into 2 dimensional string array for output
