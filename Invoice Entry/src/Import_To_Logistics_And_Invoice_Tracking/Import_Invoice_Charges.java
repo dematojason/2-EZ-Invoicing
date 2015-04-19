@@ -38,16 +38,16 @@ public class Import_Invoice_Charges {
 	public Import_Invoice_Charges(/*File[] file*/) {
 		
 		/*this.dest_file = file;*/ //Purchase Order Files (can maybe have program decide which files based on current month/year? Not sure yet)
-		insertAllCharges();
+		insertAllChargesAllSheets();
 		
 	}
 	
-	private void insertAllCharges() {
+	private void insertAllChargesAllSheets() {
 	/**********************************************************************************************************************
 	* Inserts all charges from import sheets into Purchase Order sheets and invoice tracking sheet
 	*/
 		
-		for(int i = 0; i < import_files.length; i++) {
+		for(int i = 0; i < import_files.length; i++) { //for each import file
 			Worksheet_Data import_sheet = new Worksheet_Data(import_files[i], 0);
 			if(import_sheet.sheetIsEmpty() == false) {
 				importSheet(import_sheet);
@@ -83,9 +83,9 @@ public class Import_Invoice_Charges {
 					String[][] matching_po_sheet_data = dest_po_data.getSheetDataIfMatchFound(import_sheet.getImportRowRefNum(i), column_index);
 					
 					if(matching_po_sheet_data != null) { //make sure matching_dest_data was given some value
-						ArrayList<Integer> row_ints = dest_po_data.getMatchingRowNumbers(reference_number, column_index); //get rows of destination file matching reference number
-						ArrayList<String> row_data = import_sheet.getRowData(i); //get current row data
-						importCurRow(row_data, row_ints, invoice_tracking_data.length, dest_po_data, j, k); //pass current row's data and list of matching integers into method importCurRow for final importing
+						ArrayList<Integer> matching_row_ints = dest_po_data.getMatchingRowNumbers(reference_number, column_index); //get rows of destination file matching reference number
+						ArrayList<String> import_row_data = import_sheet.getRowData(i); //get current row data
+						importCurRow(import_row_data, matching_row_ints, invoice_tracking_data.length, dest_po_data, j, k); //pass current row's data and list of matching integers into method importCurRow for final importing
 					}
 				}
 			}
@@ -93,17 +93,20 @@ public class Import_Invoice_Charges {
 			
 	}
 	
-	private void importCurRow(ArrayList<String> row_data, ArrayList<Integer> row_ints, int next_invoice_tracking_row, Worksheet_Data dest_sheet_data, int po_file_index, int po_sheet_index) {
+	private void importCurRow(ArrayList<String> import_row_data, ArrayList<Integer> matching_row_ints, int next_invoice_tracking_row, Worksheet_Data dest_sheet_data, int po_file_index, int po_sheet_index) {
 		
-		Dat_Standard_Import_Row cur_row = new Dat_Standard_Import_Row(row_data);
-		for(int i = 0; i < row_ints.size(); i++) { //for each matching row in destination sheet
+		for(int i = 0; i < matching_row_ints.size(); i++) { //for each matching row in destination sheet
 			try{
-				if(cur_row.getChargeType() != "Delivery") {
+				String charge_type = import_row_data.get(3);
+				if(charge_type != "Delivery") {
+					int charge_col_index = getChargeColumnNum(charge_type, po_sheet_index); //get column index for this charge
 					if(po_sheet_index == 0) {
 						XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(dest_po_file[po_file_index]));
 						XSSFSheet ws = wb.getSheetAt(po_sheet_index);
-						Row row = ws.getRow(row_ints.get(i));
-						Cell cell = row.getCell(arg0)
+						Row row = ws.getRow(matching_row_ints.get(i));
+						Cell cell = row.getCell(charge_col_index);
+						cell.setCellType(Cell.CELL_TYPE_STRING);
+						cell.setCellValue(addCurAndNewCharge(getActualChargeValue(import_row_data.get(4), matching_row_ints.size()), cell));
 					}
 				}
 			}catch(FileNotFoundException err) {
@@ -113,16 +116,22 @@ public class Import_Invoice_Charges {
 				System.out.println("There was an error while attempting to open the destination purchase orders file.");
 				err.printStackTrace();
 			}
-			insertCharge(cur_row.getChargeType(), cur_row.getChargeTotalAmount(), po_file_index, po_sheet_index);
 		}
 		//Worksheet_Data invoice_tracking_sheet = new Worksheet_Data(dest_invoice_tracking_file, 0);
 		//int row_index = invoice_tracking_sheet.getNumberOfRows();
 		
 	}
+	
+	private String addCurAndNewCharge(String new_chg_amt, Cell cell) {
+		
+		double cur_amt = cell.getNumericCellValue();
+		return Double.toString(Double.parseDouble(new_chg_amt) + cur_amt);
+		
+	}
 		
 	private String getActualChargeValue(String charge_amount, int number_of_matching_rows) {
 	/**********************************************************************************************************************
-	* Returns actual charge amount for each row
+	* Returns actual charge amount for output to each row
 	*/
 		
 		if(number_of_matching_rows > 1) {

@@ -16,9 +16,9 @@ public class CELL_TO_STRING {
 	private static Workbook excel_workbook;
 	private static int cell_type;
 	
-	public static void setCellToString(int cellType, XSSFCell cell) {
-		cell_value = cell;
-		cell_type = cellType;
+	public CELL_TO_STRING(int cellType, XSSFCell cell) {
+		this.cell_value = cell;
+		this.cell_type = cellType;
 	}
 	
 	public static String getCellToString() throws RuntimeException {

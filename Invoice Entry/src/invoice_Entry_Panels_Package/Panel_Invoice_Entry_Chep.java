@@ -68,7 +68,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	
 	public Panel_Invoice_Entry_Chep(File pass_import_file) {
 		
-		this.import_file = pass_import_file;
+		this.import_file = new File("C:/Users/Jdemato/Documents/Chep Invoice Charge Import Sheet.xlsx");/*pass_import_file;*/
 		
 		this.label_main_invoice_info = new JLabel("Invoice Information");
 		this.label_main_product_breakup = new JLabel("Product Breakup");
