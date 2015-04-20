@@ -16,13 +16,13 @@ public class Background_Panel extends JPanel{
 	
 	private static final long serialVersionUID = 1L;
 
-	File img_file = new File("//logo.png");
+	File img_file;
 	BufferedImage image;
 
 	public Background_Panel()
 	{
 		try {
-			image = ImageIO.read(img_file);
+			image = ImageIO.read(this.getClass().getResource("/images/logo.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
