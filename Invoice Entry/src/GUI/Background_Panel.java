@@ -16,9 +16,8 @@ public class Background_Panel extends JPanel{
 	
 	private static final long serialVersionUID = 1L;
 
-	File img_file = new File("logo.png");
+	File img_file = new File("//logo.png");
 	BufferedImage image;
-	
 
 	public Background_Panel()
 	{
