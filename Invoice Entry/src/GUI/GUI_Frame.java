@@ -2,10 +2,10 @@ package GUI;
 
 import invoice_Entry_Panels_Package.*;
 
-
-
 import java.io.*;
+import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
@@ -19,16 +19,28 @@ public class GUI_Frame {
 		
 		File import_file = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Invoice Charge Import Sheet.xlsx");
 		
-		public GUI_Frame() {
+		public GUI_Frame(App app) {
 				frame_setup();
 				menu_bar_setup();
+				app.start();
 		}
 		
 		public void frame_setup() {
 				frame = new JFrame("2EZ Invoicing");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				ArrayList<Image> icons = new ArrayList<Image>(3);
+				for(int i = 4; i < 7; i++) {
+					String tmp = "/icon/logo_" + (2 << i-1) + "x" + (2 << i-1) + ".png";
+					try {
+						icons.add(ImageIO.read(getClass().getResource(tmp)));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				frame.setIconImages(icons);
 				content_pane = new Background_Panel();
 				frame.setContentPane(content_pane);
+				JFrame.setDefaultLookAndFeelDecorated(true);
 				frame.pack();
 				frame.setLocationRelativeTo(null); //center frame
 				frame.setVisible(true);
@@ -220,15 +232,6 @@ public class GUI_Frame {
 			frame.revalidate();
 			frame.repaint();
 			content_pane.revalidate();
-		}
-		
-		public static void main(String[] args) { 
-			
-			double time_elasped;
-			
-			GUI_Frame gui = new GUI_Frame();
-			
-			
 		}
 	
 }

@@ -9,10 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-
-
 public class Background_Panel extends JPanel{
-
 	
 	private static final long serialVersionUID = 1L;
 
@@ -26,8 +23,7 @@ public class Background_Panel extends JPanel{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		setLayout(new BorderLayout());
-		
+		setLayout(new BorderLayout());	
 	}
 	
 	@Override
