@@ -19,7 +19,7 @@ public class Background_Panel extends JPanel{
 	public Background_Panel()
 	{
 		try {
-			image = ImageIO.read(this.getClass().getResource("/images/logo.png"));
+			image = ImageIO.read(this.getClass().getResource("/res/images/logo.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

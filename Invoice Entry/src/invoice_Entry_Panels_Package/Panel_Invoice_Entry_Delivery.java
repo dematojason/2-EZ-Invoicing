@@ -11,13 +11,13 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
-public class Panel_Invoice_Entry_Delivery extends JPanel {
+public class Panel_Invoice_Entry_Delivery extends JPanel implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	
 	JTextField[] text_fields = new JTextField[7];
 	String[] label_strings= {"Invoice Number",  "Invoice Company", "Invoice Date", 
-								"Reference Number", "Charge Type", "Charge Amount",
+								"Charge Type", "Charge Amount", "Reference Number",
 								"Delivery Date"};
 	JLabel[] labels;
 	JButton[] buttons = new JButton[2];
@@ -26,7 +26,7 @@ public class Panel_Invoice_Entry_Delivery extends JPanel {
 	public Panel_Invoice_Entry_Delivery () {
 		
 		setLayout(new MigLayout());
-		init_and_add_components();		
+		init_and_add_components();
 	}
 	
 	public void init_and_add_components() {
@@ -34,7 +34,7 @@ public class Panel_Invoice_Entry_Delivery extends JPanel {
 		for(int i = 0; i < label_strings.length; i++) {
 			labels[i] = new JLabel(label_strings[i]);
 			labels[i].setFont(new Font("Sans Serif", Font.PLAIN, 10));
-			if(i != 4)	{
+			if(i != 3)	{
 				text_fields[i] = new JTextField(15);
 			}
 			else {
@@ -63,6 +63,25 @@ public class Panel_Invoice_Entry_Delivery extends JPanel {
 				});
 			}
 			add(buttons[i]);
+		}
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String action = e.getActionCommand(); //sets String action equal to the string identifying the command for this event
+		if(action.equals("Cancel")) {
+			System.exit(0);
+		}else if(action.equals("Insert")) {
+			String[][] data = new String[1][7];
+			for(int i = 0; i < 7; i++) {
+				data[0][i] = text_fields[i].getText();
+			}
+			
+			/*{"Invoice Number",  "Invoice Company", "Invoice Date", 
+				"Charge Type", "Charge Amount", "Reference Number",
+				"Delivery Date"};*/
+			Invoice_Entry_toImportSheet insertDataToImportSheet = new Invoice_Entry_toImportSheet(data);
+			insertDataToImportSheet.importDataStandard();
 		}
 	}
 }

@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -55,8 +56,8 @@ public class XLSX_Extractor {
 	public static void get_cell_data(XSSFSheet ws, int last_column, int last_row) {
 		XSSFCell this_cell = null;
 		XSSFRow row = null;
-		for(int i = 1; i < last_row+1; i++) {
-			for(int j = 0; j < last_column+1; j++) {
+		for(int i = 1; i < cell_data.length; i++) {
+			for(int j = 0; j < cell_data[i].length; j++) {
 				row = ws.getRow(i);
 				this_cell = row.getCell(j);
 				if(this_cell != null)
@@ -71,7 +72,6 @@ public class XLSX_Extractor {
 			String tmp = String.valueOf(xssfCell.getNumericCellValue());
 			return tmp; 
 		case 1: // cell contains string value
-			
 			return xssfCell.getRichStringCellValue().getString();
 		case 2: // cell contains formula value
 			return xssfCell.getCellFormula();
@@ -90,19 +90,31 @@ public class XLSX_Extractor {
 	
 	public static int getActualLastRowNum(XSSFSheet ws) {
 		
+		int double_check = 0;
 		for(int i = 0; i < ws.getLastRowNum(); i++) {
-			for(int j = 0; j < ws.getRow(i).getLastCellNum(); j++) {
-				XSSFCell cell = ws.getRow(i).getCell(j);
-				if(cell != null) {
-					break;
-				}else if(j == ws.getRow(i).getLastCellNum() - 1) { //if last cell in column
-					return i - 1; //return the row before current row (last row containing value)
-				}
+			if(isRowEmpty(ws.getRow(i)) == false) {
+				double_check = 0;
+				continue;
+			}else if(double_check != 10){ //check 10 rows after finding an empty row to account for if there are a few random blank rows in sheet
+				double_check++;
+				continue;
+			}else{
+				return i - 12; //return this row minus 11 (account for 10 blank rows that were checked and 1 more to return last row containing value)
 			}
 		}
+		System.out.println("Get Last Row Num =  " + ws.getLastRowNum());
+		return ws.getLastRowNum();
 		
-		return 0;
-		
+	}
+	
+	private static boolean isRowEmpty(Row row) {
+		for(int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
+			Cell cell = row.getCell(i);
+			if(cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public String[][] convertObjToStringArray(Object[][] obj) {

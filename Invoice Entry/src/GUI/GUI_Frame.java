@@ -17,8 +17,6 @@ public class GUI_Frame {
 		Background_Panel content_pane;
 		JFileChooser file_chooser;
 		
-		File import_file = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Invoice Charge Import Sheet.xlsx");
-		
 		public GUI_Frame(App app) {
 				frame_setup();
 				menu_bar_setup();
@@ -30,7 +28,7 @@ public class GUI_Frame {
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				ArrayList<Image> icons = new ArrayList<Image>(3);
 				for(int i = 4; i < 7; i++) {
-					String tmp = "/icon/logo_" + (2 << i-1) + "x" + (2 << i-1) + ".png";
+					String tmp = "/res/images/logo" /*_" + (2 << i-1) + "x" + (2 << i-1)*/ + ".png";
 					try {
 						icons.add(ImageIO.read(getClass().getResource(tmp)));
 					} catch (IOException e) {
@@ -101,7 +99,7 @@ public class GUI_Frame {
 						JMenuItem CHEP_invoice_entry = new JMenuItem("CHEP Invoice Entry");
 						CHEP_invoice_entry.addActionListener(new ActionListener() {	
 							public void actionPerformed(ActionEvent e)	{
-								Panel_Invoice_Entry_Chep iec_panel = new Panel_Invoice_Entry_Chep(import_file);
+								Panel_Invoice_Entry_Chep iec_panel = new Panel_Invoice_Entry_Chep();
 								JOptionPane.showOptionDialog(null, 
 										iec_panel,
 										"CHEP Invoice Entry",
