@@ -50,7 +50,7 @@ public class Import_Sheet_To_LogAndInv_Sheets {
 		}
 	}
 	
-	public void importStandard() {
+	public void importStandard(String[][] data) {
 		String invoice_num = null;
 		String invoice_company = null;
 		String invoice_date = null;

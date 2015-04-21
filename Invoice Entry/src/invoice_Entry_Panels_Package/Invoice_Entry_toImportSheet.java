@@ -26,19 +26,15 @@ public class Invoice_Entry_toImportSheet {
         userName = enterUsername.getText();
         if (e.getSource() == okButton) {*/
 
-	String sheet_type;
-	File import_file;
-	Object[][] import_file_data;
+	File chep_import_file = new File("C:/Users/Jdemato/Documents/Chep Invoice Charge Import Sheet.xlsx");
+	File standard_import_file = new File("C:/Users/Jdemato/Documents/Standard Invoice Charge Import Sheet.xlsx");
 	
-	public Invoice_Entry_toImportSheet(String import_string, File passed_import_file) {
-		this.sheet_type = import_string;
-		this.import_file = passed_import_file;
+	
+	public Invoice_Entry_toImportSheet() {
 		
-		XLSX_Extractor extract_output_bulk = new XLSX_Extractor(import_file, 0); //get extracted data from sheet index = 1 of output file
-		this.import_file_data = extract_output_bulk.getCellData();
 	}
 	
-	public void importDataStandard() {
+	public void importDataStandard(String[][] data) {
 		
 	}
 	
@@ -46,6 +42,9 @@ public class Invoice_Entry_toImportSheet {
 	public void importDataChep(String account_name, String invoice_number, String invoice_date,
 			String reference, JTextField[] descriptions, JTextField[] regions, JTextField[] percentages,
 			String sub_total, String tax, String net_total) {
+		
+		XLSX_Extractor extract_output_bulk = new XLSX_Extractor(chep_import_file, 0);
+		Object[][] import_file_data = extract_output_bulk.getCellData();
 		
 		try {
 			//store passed data into 2 dimensional string array for output
@@ -62,7 +61,7 @@ public class Invoice_Entry_toImportSheet {
 			}
 			
 			//Open FileInputStream for wb
-			FileInputStream fis = new FileInputStream(import_file);
+			FileInputStream fis = new FileInputStream(chep_import_file);
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
 			XSSFSheet ws = wb.getSheetAt(0);
 			
@@ -86,11 +85,9 @@ public class Invoice_Entry_toImportSheet {
 				//section of invoice Charge Import Sheet.xlsx
 				for(int next_row = last_row; next_row < descriptions.length + last_row; next_row++) {
 					Row row = ws.createRow((short)next_row);
-					for(int x = 0; x < 10; x++) {
+					for(int x = 0; x < 7; x++) {
 						column = x;
-						//set cell = the next empty row (row_next), the matching output column...
-						//matching output columns for CHEP beginning @ column 18 ("R"), go until column 27 ("AA")
-						//See Excel file "Invoice Charge Import Sheet.xlsx" for reference
+						//set cell = the next empty row (row_next), the matching output column
 						if(ws.getRow(next_row) != null) {
 							cell = row.createCell((short)column);
 							cell.setCellType(Cell.CELL_TYPE_STRING); //set current cell's type to string for inputting string data
@@ -140,7 +137,7 @@ public class Invoice_Entry_toImportSheet {
 		**********************************************************************************************************************/
 						
 			fis.close();
-			FileOutputStream fos = new FileOutputStream(import_file);
+			FileOutputStream fos = new FileOutputStream(chep_import_file);
 			wb.write(fos);
 			fos.close();
 			wb.close();
