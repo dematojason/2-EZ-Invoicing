@@ -212,15 +212,6 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 			err.printStackTrace();
 		}
 	}
-	
-/*	@Override
-    public void actionPerformed(ActionEvent e) {
-        char[] pass = enterPassword.getPassword();
-        passString = new String(pass);
-        char[] passConfirm = enterConfirmPassword.getPassword();
-        String passStringConfirm = new String(passConfirm);
-        userName = enterUsername.getText();
-        if (e.getSource() == okButton) {*/
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -228,10 +219,21 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		if(action.equals("Cancel")) {
 			System.exit(0);
 		}else if(action.equals("Insert")) {
-			frame_to_importSheet = new Invoice_Entry_toImportSheet("Chep", import_file);
-			frame_to_importSheet.importDataChep(text_account.getText(), text_invoice_number.getText(),
-					text_invoice_date.getText(), text_reference.getText(), text_product, text_region, 
-					text_percent, text_sub_total.getText(), text_tax.getText(), text_net_total.getText());
+			String[][] data = new String[answer][10];
+			for(int i = 0; i < answer; i++) {
+				data[i][0] = text_account.getText();
+				data[i][1] = text_invoice_number.getText();
+				data[i][2] = text_invoice_date.getText();
+				data[i][3] = text_reference.getText();
+				data[i][4] = text_product[i].getText();
+				data[i][5] = text_region[i].getText();
+				data[i][6] = text_percent[i].getText();
+				data[i][7] = text_sub_total.getText();
+				data[i][8] = text_tax.getText();
+				data[i][9] = text_net_total.getText();
+			}
+			frame_to_importSheet = new Invoice_Entry_toImportSheet();
+			frame_to_importSheet.importDataChep(data, answer);
 		}
 	}
 	public Dimension getDimension() {

@@ -137,9 +137,6 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 		if(action.equals("Cancel")) {
 			System.exit(0);
 		}else if(action.equals("Insert")) {
-			for(int i = 0; i < number_of_charges; i++) {
-				
-			}
 			String[][] data = new String[charge_amount.length][8];
 			for(int i = 0; i < number_of_charges; i++) {
 				data[i][0] = text_invoice_number.getText();

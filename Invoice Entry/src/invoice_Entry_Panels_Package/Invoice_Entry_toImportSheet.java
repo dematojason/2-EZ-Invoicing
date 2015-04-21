@@ -39,26 +39,27 @@ public class Invoice_Entry_toImportSheet {
 	}
 	
 	//Imports data from CHEP style panel into CHEP Invoice section of Invoice Charge Import Sheet.xslx
-	public void importDataChep(String account_name, String invoice_number, String invoice_date,
-			String reference, JTextField[] descriptions, JTextField[] regions, JTextField[] percentages,
-			String sub_total, String tax, String net_total) {
+	public void importDataChep(String[][] data, int number) {
+		
+		/*
+		 * 0 = account name
+		 * 1 = invoice number
+		 * 2 = invoice date
+		 * 3 = reference
+		 * 4 = descriptions JTextField[]
+		 * 5 = regions JTextField[]
+		 * 6 = percentages JTextField[]
+		 * 7 = sub total
+		 * 8 = tax
+		 * 9 = net total
+		 * importDataChep(String account_name, String invoice_number, String invoice_date,
+				String reference, JTextField[] descriptions, JTextField[] regions, JTextField[] percentages,
+				String sub_total, String tax, String net_total)*/
 		
 		XLSX_Extractor extract_output_bulk = new XLSX_Extractor(chep_import_file, 0);
 		Object[][] import_file_data = extract_output_bulk.getCellData();
 		
 		try {
-			//store passed data into 2 dimensional string array for output
-			String[][] chep_invoiceEntryData_toImportSheet = new String[descriptions.length][10];
-			for(int z = 0; z < descriptions.length; z++) {
-				chep_invoiceEntryData_toImportSheet[z][0] = account_name;
-				chep_invoiceEntryData_toImportSheet[z][1] = invoice_number;
-				chep_invoiceEntryData_toImportSheet[z][2] = invoice_date;
-				chep_invoiceEntryData_toImportSheet[z][3] = reference;
-				//skip indexes [z][4] to [z][6] as they will be given value individually in the switch(x) statement later
-				chep_invoiceEntryData_toImportSheet[z][7] = sub_total;
-				chep_invoiceEntryData_toImportSheet[z][8] = tax;
-				chep_invoiceEntryData_toImportSheet[z][9] = net_total;
-			}
 			
 			//Open FileInputStream for wb
 			FileInputStream fis = new FileInputStream(chep_import_file);
@@ -83,7 +84,7 @@ public class Invoice_Entry_toImportSheet {
 			if(last_row > 0) {
 				//loop beginning at last row with value + 1; for however many entries are necessary
 				//section of invoice Charge Import Sheet.xlsx
-				for(int next_row = last_row; next_row < descriptions.length + last_row; next_row++) {
+				for(int next_row = last_row; next_row < number + last_row; next_row++) {
 					Row row = ws.createRow((short)next_row);
 					for(int x = 0; x < 7; x++) {
 						column = x;
