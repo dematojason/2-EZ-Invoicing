@@ -28,7 +28,7 @@ public class GUI_Frame {
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				ArrayList<Image> icons = new ArrayList<Image>(3);
 				for(int i = 4; i < 7; i++) {
-					String tmp = "/res/images/logo" /*_" + (2 << i-1) + "x" + (2 << i-1)*/ + ".png";
+					String tmp = "/res/images/logo_" + (2 << i-1) + "x" + (2 << i-1) + ".png";
 					try {
 						icons.add(ImageIO.read(getClass().getResource(tmp)));
 					} catch (IOException e) {
