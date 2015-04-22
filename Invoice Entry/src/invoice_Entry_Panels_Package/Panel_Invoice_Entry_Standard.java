@@ -73,8 +73,6 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 				"Drayage","Delivery","Inland Europe","Miscellaneous"};
 		String[] count_charges_options = {"1","2","3","4","5","6","7","8","9","10"};
 		
-		
-		
 		try {
 			this.number_of_charges = Integer.parseInt((String) JOptionPane.showInputDialog(null, 
 					"How many charges are on this invoice?", 
@@ -149,8 +147,8 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 				data[i][6] = "";
 				data[i][7] = dateStr;
 			}
-			transfer_to_import_sheet = new Invoice_Entry_toImportSheet(data);
-			transfer_to_import_sheet.importDataStandard();
+			transfer_to_import_sheet = new Invoice_Entry_toImportSheet(data, 0);
+			transfer_to_import_sheet.insertImportSheetData();
 		}
 	}
 	

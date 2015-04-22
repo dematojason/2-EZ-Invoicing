@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -20,9 +18,11 @@ public class XLSX_Extractor {
 	public static Object[][] cell_data;
 	public static Object[] column_headers;
 	
+	int sheetNum;
+	
 	public XLSX_Extractor(File file, int sheet_location)   {
-		try {
 		
+		try {
 			FileInputStream fis = new FileInputStream(file);
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
 			XSSFSheet ws = wb.getSheetAt(sheet_location); //finds correct sheet of workbook based on passed integer sheet_location
@@ -36,13 +36,15 @@ public class XLSX_Extractor {
 			get_cell_data(ws, last_row, last_column);
 			wb.close();
 			fis.close();
-			
-		} catch (IOException e){
-			e.printStackTrace();
+		}catch(FileNotFoundException err) {
+			err.printStackTrace();
+		}catch(IOException err) {
+			err.printStackTrace();
 		}
 	
 	}
-	public static void get_column_headers( XSSFSheet ws, int last_column) {
+	public static void get_column_headers(XSSFSheet ws, int last_column) {
+		
 		XSSFCell this_cell = null;
 		XSSFRow row = null;
 		for(int i = 0; i < last_column; i++) {
@@ -52,6 +54,7 @@ public class XLSX_Extractor {
 				column_headers[i] = cellToString(this_cell);
 			}
 		}
+		
 	}
 	public static void get_cell_data(XSSFSheet ws, int last_column, int last_row) {
 		XSSFCell this_cell = null;
@@ -144,9 +147,8 @@ public class XLSX_Extractor {
 						System.out.print(" | ");
 					}
 				}catch(NullPointerException e) {
-					
+					e.printStackTrace();
 					System.out.println("NullPointerException @ row =  " + i + " and column =  " + x);
-					
 				}
 			}
 			System.out.println();

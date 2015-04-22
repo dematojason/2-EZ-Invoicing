@@ -48,19 +48,11 @@ public class Panel_Invoice_Entry_Delivery extends JPanel implements ActionListen
 			
 			if(i == 0) {
 				buttons[i] = new JButton("Submit");
-				buttons[i].addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						//do something
-					}
-				});
+				buttons[i].addActionListener(this);
 			}
 			else {
-				buttons[i] = new JButton("Submit");
-				buttons[i].addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						//do something
-					}
-				});
+				buttons[i] = new JButton("Cancel");
+				buttons[i].addActionListener(this);
 			}
 			add(buttons[i]);
 		}
@@ -71,7 +63,7 @@ public class Panel_Invoice_Entry_Delivery extends JPanel implements ActionListen
 		String action = e.getActionCommand(); //sets String action equal to the string identifying the command for this event
 		if(action.equals("Cancel")) {
 			System.exit(0);
-		}else if(action.equals("Insert")) {
+		}else if(action.equals("Submit")) {
 			String[][] data = new String[1][7];
 			for(int i = 0; i < 7; i++) {
 				data[0][i] = text_fields[i].getText();
@@ -80,8 +72,8 @@ public class Panel_Invoice_Entry_Delivery extends JPanel implements ActionListen
 			/*{"Invoice Number",  "Invoice Company", "Invoice Date", 
 				"Charge Type", "Charge Amount", "Reference Number",
 				"Delivery Date"};*/
-			Invoice_Entry_toImportSheet insertDataToImportSheet = new Invoice_Entry_toImportSheet(data);
-			insertDataToImportSheet.importDataStandard();
+			Invoice_Entry_toImportSheet insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 0);
+			insertDataToImportSheet.insertImportSheetData();
 		}
 	}
 }

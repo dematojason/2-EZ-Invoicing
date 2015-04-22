@@ -206,7 +206,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand(); //sets String action equal to the string identifying the command for this event
-		if(action.equals("Cancel")) {
+		if(action.equals("Reset")) {
 			System.exit(0);
 		}else if(action.equals("Submit")) {
 			String[][] data = new String[answer][8];
@@ -222,9 +222,25 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 				data[i][6] = text_net_total.getText();
 				data[i][7] = dateStr;
 			}
-			insertDataToImportSheet = new Invoice_Entry_toImportSheet(data);
-			insertDataToImportSheet.importDataChep();
+			insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 1);
+			insertDataToImportSheet.insertImportSheetData();
+			
+			clearTextFields();
 		}
+	}
+	
+	private void clearTextFields() {
+		
+		text_account.setText("");
+		text_invoice_number.setText("");
+		text_invoice_date.setText("");
+		text_net_total.setText("");
+		for(int i = 0; i < answer; i++) {
+			text_product[i].setText("");
+			text_region[i].setText("");
+			text_percent[i].setText("");
+		}
+		
 	}
 	
 	public Dimension getDimension() {
