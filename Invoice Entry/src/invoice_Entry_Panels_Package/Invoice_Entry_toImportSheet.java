@@ -23,9 +23,9 @@ public class Invoice_Entry_toImportSheet {
 		this.panel_data = panel_data;
 		this.sdChp = sdChp;
 		if(sdChp == 0) {
-			this.impFile = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Standard Invoice Charge Import Sheet.xlsx");
+			this.impFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Standard Invoice Charge Import Sheet.xlsx");
 		}else if(sdChp == 1) {
-			this.impFile = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Chep Invoice Charge Import Sheet.xlsx");
+			this.impFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Chep Invoice Charge Import Sheet.xlsx");
 		}else{
 			System.out.println("Invoice was not specified as either Standard (0) nor Chep (1).");
 			throw new IllegalArgumentException();
@@ -55,12 +55,15 @@ public class Invoice_Entry_toImportSheet {
 			
 			//loop begins at last row with value + 1; ends at however many entries are specified prior (impData.length)
 			for(int i = lastRow + 1; i < panel_data.length + lastRow; i++) {
-				Row row = ws.createRow((short)i);
+				Row row = ws.getRow(i);
+				
 				for(int j = 0; j < panel_data[0].length; j++) {
+					
 					//set cell = the next empty row (row_next), the matching output column
 					if(ws.getRow(i) != null) {
 						cell = row.createCell((short)j);
 						cell.setCellType(Cell.CELL_TYPE_STRING); //set current cell's type to string for inputting string data
+						
 						if(sdChp != 1 || j != 6) {
 							cell.setCellValue(panel_data[row_count][j]);
 						}else if(panel_data[row_count][j] != "0" && panel_data[row_count][j] != "") { //Net Total ($) column in Chep Invoice Charge Import Sheet
@@ -74,12 +77,15 @@ public class Invoice_Entry_toImportSheet {
 						}else{
 							cell.setCellValue("0"); //should probably be throwing new exception here... cannot insert blank charge nor charge value of 0.
 						}
+						
 					}else{
 						System.out.println(i + " == null");
 						continue;
 					}
+					
 				}
 				row_count++;
+				
 			}
 			
 			fis.close();

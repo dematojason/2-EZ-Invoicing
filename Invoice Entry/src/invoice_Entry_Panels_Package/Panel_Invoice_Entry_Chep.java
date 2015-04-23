@@ -211,7 +211,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		}else if(action.equals("Submit")) {
 			String[][] data = new String[answer][8];
 			Date date = new Date();
-			String dateStr= new SimpleDateFormat("MM-dd-yyyy").format(date);
+			String dateStr= new SimpleDateFormat("MM/dd/yyyy").format(date);
 			for(int i = 0; i < answer; i++) {
 				data[i][0] = text_account.getText();
 				data[i][1] = text_invoice_number.getText();
