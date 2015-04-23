@@ -222,8 +222,10 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 				data[i][6] = text_net_total.getText();
 				data[i][7] = dateStr;
 			}
-			insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 1);
-			insertDataToImportSheet.insertImportSheetData();
+			/*insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 1);
+			insertDataToImportSheet.insertImportSheetData();*/
+			DataToStorage exportData = new DataToStorage();
+			exportData.exportData(data, 1);
 			
 			clearTextFields();
 		}
