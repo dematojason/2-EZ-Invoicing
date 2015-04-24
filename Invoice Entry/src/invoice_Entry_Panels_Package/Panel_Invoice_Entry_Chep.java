@@ -211,7 +211,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		}else if(action.equals("Submit")) {
 			String[][] data = new String[answer][8];
 			Date date = new Date();
-			String dateStr= new SimpleDateFormat("MM-dd-yyyy").format(date);
+			String dateStr= new SimpleDateFormat("MM/dd/yyyy").format(date);
 			for(int i = 0; i < answer; i++) {
 				data[i][0] = text_account.getText();
 				data[i][1] = text_invoice_number.getText();
@@ -222,8 +222,10 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 				data[i][6] = text_net_total.getText();
 				data[i][7] = dateStr;
 			}
-			insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 1);
-			insertDataToImportSheet.insertImportSheetData();
+			/*insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 1);
+			insertDataToImportSheet.insertImportSheetData();*/
+			DataToStorage exportData = new DataToStorage();
+			exportData.exportData(data, 1);
 			
 			clearTextFields();
 		}
