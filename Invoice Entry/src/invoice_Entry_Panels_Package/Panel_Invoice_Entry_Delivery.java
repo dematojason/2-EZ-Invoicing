@@ -16,7 +16,7 @@ public class Panel_Invoice_Entry_Delivery extends JPanel implements ActionListen
 	private static final long serialVersionUID = 1L;
 	
 	JTextField[] text_fields = new JTextField[7];
-	String[] label_strings= {"Invoice Number",  "Invoice Company", "Invoice Date", 
+	String[] label_strings= {"Invoice Company", "Invoice Number", "Invoice Date", 
 								"Charge Type", "Charge Amount", "Reference Number",
 								"Delivery Date"};
 	JLabel[] labels;
