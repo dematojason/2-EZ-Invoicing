@@ -120,7 +120,7 @@ public class XLSX_Extractor {
 		return true;
 	}
 	
-	public String[][] convertObjToStringArray(Object[][] obj) {
+	public static String[][] convertObjToStringArray(Object[][] obj) {
 		
 		String[][] str = new String[obj.length][obj[0].length];
 		for(int i = 0; i < obj.length; i++) {
