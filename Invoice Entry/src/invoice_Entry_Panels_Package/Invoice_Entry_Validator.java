@@ -2,7 +2,11 @@ package invoice_Entry_Panels_Package;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
+import javax.swing.JOptionPane;
 
 public class Invoice_Entry_Validator {
 	
@@ -73,30 +77,27 @@ public class Invoice_Entry_Validator {
 		
 	}
 	
+	@SuppressWarnings("static-access")
 	private boolean isDeliveryDate(String string) {
-		if(string == null) {
-			return false;
+		String[] tmp = string.split("/");
+		int[] date = new int[tmp.length];
+		for(int i = 0; i < date.length; i++) {
+			date[i] = Integer.parseInt(tmp[i]);
 		}
-		//set the format to use as a constructor argument
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+		Calendar today = new GregorianCalendar();
+		Calendar delivery_date = new GregorianCalendar(date[2], date[1], date[0]);
+		Calendar limit_date;
+		if(today.MONTH < 9) 
+			limit_date = new GregorianCalendar(today.YEAR, today.MONTH+4, today.DAY_OF_MONTH);
+		else
+			limit_date = new GregorianCalendar(today.YEAR+1, today.MONTH+4%12, today.DAY_OF_MONTH);
 		
-		if(string.trim().length() != sdf.toPattern().length()) {
+		if(delivery_date.compareTo(today) <= 0) 
 			return false;
-		}
-		
-		sdf.setLenient(false);
-		try {
-			//attempt to parse the string passed into a date
-			sdf.parse(string.trim());
-		}catch(ParseException err) {
+		else if(delivery_date.compareTo(limit_date) >= 0)
 			return false;
-		}
-		
-		Date today = new Date();
-		
-		
-		
-		return true;
+		else
+			return true;
 		
 	}
 
@@ -106,7 +107,17 @@ public class Invoice_Entry_Validator {
 	}
 
 	private boolean isValidAmount(String string) {
-		// TODO Auto-generated method stub
+		double tmp = Double.parseDouble(string);
+		if(tmp < 0) {
+			return false;
+		}
+		if(tmp > 9000) {
+			int decision = JOptionPane.showConfirmDialog (null, "Amount is over 9000! Are you sure this is correct?","Warning!", JOptionPane.YES_NO_OPTION);
+			if(decision == JOptionPane.YES_OPTION)
+				return true;
+			else
+				return false;
+		}
 		return false;
 	}
 
@@ -164,11 +175,6 @@ public class Invoice_Entry_Validator {
 			return false;
 		}
 		return true;
-		
-	}
-public String getErrorMessage() {
-		
-		return err_msg;
 		
 	}
 	

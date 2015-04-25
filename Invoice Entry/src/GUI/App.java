@@ -41,8 +41,7 @@ public class App implements Runnable{
 			check_file_status("somefile");
 			// can add more of these ^ for more files
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//shits fuckin closed dawgggggg
 		}
 		
 	}
