@@ -62,8 +62,11 @@ public class App implements Runnable{
 		}
 	}
 	private void out_to_file(File file) {
-		//write out to whatever file you want
-		
+		// Open middle file first
+		// take data for the second file
+		// close middle file
+		// open excel wb 
+		// add all entries for that file
 	}
 
 	public static void main(String[] args) {
