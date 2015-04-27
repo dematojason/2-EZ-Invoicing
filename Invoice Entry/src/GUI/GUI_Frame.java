@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import Import_To_Logistics_And_Invoice_Tracking.Do_It;
+import Import_To_Logistics_And_Invoice_Tracking.Import_Invoice_Charges;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -125,6 +128,8 @@ public class GUI_Frame {
 										null,
 										new Object[]{}, 
 										null);
+								Do_It now = new Do_It(0);
+								now.importDataNow();
 							}
 						});
 						JMenuItem delivery_invoice_entry = new JMenuItem("Delivery Invoice Entry");

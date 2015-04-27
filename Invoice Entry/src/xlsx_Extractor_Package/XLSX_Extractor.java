@@ -59,7 +59,7 @@ public class XLSX_Extractor {
 	public static void get_cell_data(XSSFSheet ws, int last_column, int last_row) {
 		XSSFCell this_cell = null;
 		XSSFRow row = null;
-		for(int i = 1; i < cell_data.length; i++) {
+		for(int i = 0; i < cell_data.length; i++) { //changed to get all data including headers
 			for(int j = 0; j < cell_data[i].length; j++) {
 				row = ws.getRow(i);
 				this_cell = row.getCell(j);
@@ -120,12 +120,16 @@ public class XLSX_Extractor {
 		return true;
 	}
 	
-	public String[][] convertObjToStringArray(Object[][] obj) {
+	public static String[][] convertObjToStringArray(Object[][] obj) {
 		
 		String[][] str = new String[obj.length][obj[0].length];
 		for(int i = 0; i < obj.length; i++) {
 			for(int j = 0; j < obj[0].length; j++) {
-				str[i][j] = obj[i][j].toString();
+				if(str[i][j] != null) {
+					str[i][j] = obj[i][j].toString();
+				}else{
+					continue;
+				}
 			}
 		}
 		return str;

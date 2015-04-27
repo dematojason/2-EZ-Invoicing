@@ -21,14 +21,19 @@ import xlsx_Extractor_Package.XLSX_Extractor;
 public class Import_Invoice_Charges {
 	
 	//will define dest_file[] for testing. Not sure best way to handle.
-	File dest_po_file[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Spring 2015 Purchase Orders.xlsx"),
-			new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Holiday 2015 Purchase Orders.xlsx")};
+	/*File dest_po_file[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Spring 2015 Purchase Orders.xlsx"),
+			new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Holiday 2015 Purchase Orders.xlsx")};*/
+	File dest_po_file[] = {new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Spring 2015 Purchase Orders.xlsx"),
+			new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Holiday 2015 Purchase Orders.xlsx")};
 	
-	File invoice_tracking_file = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Invoice Tracking.xlsx");
+	/*File invoice_tracking_file = new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Invoice Tracking.xlsx");*/
+	File invoice_tracking_file = new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Invoice Tracking.xlsx");
 	
 	//define import_file[] with 3 different invoice charge import sheets
-	File import_files[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Standard Invoice Charge Import Sheet.xlsx"),
-			new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Chep Invoice Charge Import Sheet.xlsx")};
+	/*File import_files[] = {new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Standard Invoice Charge Import Sheet.xlsx"),
+			new File("C:/Users/jason.demato/Documents/Programming/Invoice Entry/Chep Invoice Charge Import Sheet.xlsx")};*/
+	File import_files[] = {new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Standard Invoice Charge Import Sheet.xlsx"), 
+			new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Chep Invoice Charge Import Sheet.xlsx")};
 		
 	public Import_Invoice_Charges(/*File[] file*/) {
 		
@@ -82,6 +87,7 @@ public class Import_Invoice_Charges {
 						
 						if(matching_po_sheet_data != null) { //make sure matching_dest_data was given some value
 							ArrayList<Integer> matching_row_ints = dest_po_data.getMatchingRowNumbers(reference_number, column_index); //get rows of destination file matching reference number
+							Dat_Standard_Import_Row import_row = new Dat_Standard_Import_Row();
 							ArrayList<String> import_row_data = import_sheet.getRowData(i); //get current row data
 							importCurRow(ws, import_row_data, matching_row_ints, invoice_tracking_data.length, dest_po_data, k); //pass current row's data and list of matching integers into method importCurRow for final importing
 						}
@@ -151,6 +157,7 @@ public class Import_Invoice_Charges {
 			System.exit(0);
 			return 0;
 		}else{
+			System.out.println(charge_type);
 			switch(charge_type) {
 				case "Ocean Freight":
 					if(tab_index == 0) { //purchase order tab

@@ -36,7 +36,7 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 	JComboBox[] combo_boxes;
 	
 	JButton button_submit;
-	JButton button_cancel;
+	JButton button_reset;
 	
 	int number_of_charges;
 	
@@ -55,7 +55,7 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 		this.text_reference = new JTextField(20);
 		
 		this.button_submit = new JButton("Submit");
-		this.button_cancel = new JButton("Cancel");
+		this.button_reset = new JButton("Reset");
 		
 		getInvoiceEntry_Standard();
 	}
@@ -64,7 +64,7 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 		/*Custom_Functions my_frame = new Custom_Functions(frame);*/
 		setLayout(new MigLayout());
 		button_submit.addActionListener(this);
-		button_cancel.addActionListener(this);
+		button_reset.addActionListener(this);
 		
 		/*add components to combo box containing charge types and JComboBox for selecting number of charges on invoice
 		count_charges_options made as a String array instead of an integer array because JOptionPane
@@ -114,7 +114,7 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 			
 			//add insert and cancel buttons aligned on right side of frame
 			add(button_submit, "skip, split2, base, r"); //skip first column, 
-			add(button_cancel, "base, r");
+			add(button_reset, "base, r");
 			
 			/*frame.setResizable(false);
 			frame.add(panel);
@@ -131,8 +131,8 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand(); //sets String action equal to the string identifying the command for this event
-		if(action.equals("Cancel")) {
-			System.exit(0);
+		if(action.equals("Reset")) {
+			clearTextFields();
 		}else if(action.equals("Submit")) {
 			String[][] data = new String[number_of_charges][8];
 			Date date = new Date();
@@ -149,7 +149,21 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 			}
 			transfer_to_import_sheet = new Invoice_Entry_toImportSheet(data, 0);
 			transfer_to_import_sheet.insertImportSheetData();
+			clearTextFields();
 		}
+	}
+	
+	private void clearTextFields() {
+		
+		text_invoice_number.setText("");
+		text_company.setText("");
+		text_date.setText("");
+		text_reference.setText("");
+		for(int i = 0; i < number_of_charges; i++) {
+			combo_boxes[i].setSelectedIndex(0);
+			charge_amount[i].setText("");
+		}
+		
 	}
 	
 	/*frame_to_importSheet = new Invoice_Entry_toImportSheet("Chep", import_file);

@@ -16,7 +16,7 @@ public class Panel_Invoice_Entry_Delivery extends JPanel implements ActionListen
 	private static final long serialVersionUID = 1L;
 	
 	JTextField[] text_fields = new JTextField[7];
-	String[] label_strings= {"Invoice Number",  "Invoice Company", "Invoice Date", 
+	String[] label_strings= {"Invoice Company", "Invoice Number", "Invoice Date", 
 								"Charge Type", "Charge Amount", "Reference Number",
 								"Delivery Date"};
 	JLabel[] labels;
@@ -51,7 +51,7 @@ public class Panel_Invoice_Entry_Delivery extends JPanel implements ActionListen
 				buttons[i].addActionListener(this);
 			}
 			else {
-				buttons[i] = new JButton("Cancel");
+				buttons[i] = new JButton("Reset");
 				buttons[i].addActionListener(this);
 			}
 			add(buttons[i]);
@@ -61,8 +61,8 @@ public class Panel_Invoice_Entry_Delivery extends JPanel implements ActionListen
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand(); //sets String action equal to the string identifying the command for this event
-		if(action.equals("Cancel")) {
-			System.exit(0);
+		if(action.equals("Reset")) {
+			clearTextFields();
 		}else if(action.equals("Submit")) {
 			String[][] data = new String[1][7];
 			for(int i = 0; i < 7; i++) {
@@ -76,4 +76,13 @@ public class Panel_Invoice_Entry_Delivery extends JPanel implements ActionListen
 			insertDataToImportSheet.insertImportSheetData();
 		}
 	}
+	
+	private void clearTextFields() {
+		
+		for(int i = 0; i < label_strings.length; i++) {
+			text_fields[i].setText("");
+		}
+		
+	}
+	
 }

@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -46,7 +45,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	JTextField text_net_total;
 	
 	JButton button_submit;
-	JButton button_cancel;
+	JButton button_reset;
 	
 	String answer_buffer;
 	int answer;
@@ -93,7 +92,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		this.text_net_total = new JTextField(5);
 		
 		this.button_submit = new JButton("Submit");
-		this.button_cancel = new JButton("Cancel");
+		this.button_reset = new JButton("Reset");
 		
 		getInvoiceEntry_Chep();
 	}
@@ -104,7 +103,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		setPreferredSize(iec_dimension);
 		
 		//add action listeners to JButtons
-		button_cancel.addActionListener(this);
+		button_reset.addActionListener(this);
 		button_submit.addActionListener(this);
 		
 		/*change font info for certain labels
@@ -189,7 +188,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 			}
 			
 			add(button_submit, "tag ok, span, split 2, sizegroup bttn");
-			add(button_cancel, "tag cancel, sizegroup bttn");
+			add(button_reset, "tag cancel, sizegroup bttn");
 			
 			/*frame.setResizable(true);
 			frame.add(panel);
@@ -207,7 +206,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand(); //sets String action equal to the string identifying the command for this event
 		if(action.equals("Reset")) {
-			System.exit(0);
+			clearTextFields();
 		}else if(action.equals("Submit")) {
 			String[][] data = new String[answer][8];
 			Date date = new Date();
@@ -224,8 +223,8 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 			}
 			/*insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 1);
 			insertDataToImportSheet.insertImportSheetData();*/
-			DataToStorage exportData = new DataToStorage();
-			exportData.exportData(data, 1);
+			Invoice_Entry_toImportSheet exportData = new Invoice_Entry_toImportSheet(data, 1);
+			exportData.insertImportSheetData();
 			
 			clearTextFields();
 		}
