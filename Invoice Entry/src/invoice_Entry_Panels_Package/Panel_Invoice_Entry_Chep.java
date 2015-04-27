@@ -4,7 +4,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,7 +19,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
 	
-	Dimension iec_dimension = new Dimension(700,400);
+	Dimension iec_dimension = new Dimension(650,350);
 	
 	JLabel label_main_invoice_info;
 	JLabel label_main_product_breakup;
@@ -43,8 +44,8 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	JTextField text_tax;
 	JTextField text_net_total;
 	
-	JButton button_insert;
-	JButton button_cancel;
+	JButton button_submit;
+	JButton button_reset;
 	
 	String answer_buffer;
 	int answer;
@@ -63,12 +64,9 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 	String[] string_text_region;
 	String[] string_text_percentage;
 	
-	Invoice_Entry_toImportSheet frame_to_importSheet;
-	File import_file;
+	Invoice_Entry_toImportSheet insertDataToImportSheet;
 	
-	public Panel_Invoice_Entry_Chep(File pass_import_file) {
-		
-		this.import_file = new File("C:/Users/Jdemato/Documents/Chep Invoice Charge Import Sheet.xlsx");/*pass_import_file;*/
+	public Panel_Invoice_Entry_Chep() {
 		
 		this.label_main_invoice_info = new JLabel("Invoice Information");
 		this.label_main_product_breakup = new JLabel("Product Breakup");
@@ -82,7 +80,7 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		this.label_sub_total_dollars = new JLabel("$");
 		this.label_tax = new JLabel("Tax:");
 		this.label_tax_dollars = new JLabel("$");
-		this.label_net_total = new JLabel("Net Total:");
+		this.label_net_total = new JLabel("Net Total: $");
 		this.label_net_total_dollars = new JLabel("$");
 		
 		this.text_account = new JTextField(15);
@@ -93,8 +91,8 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		this.text_tax = new JTextField(5);
 		this.text_net_total = new JTextField(5);
 		
-		this.button_insert = new JButton("Insert");
-		this.button_cancel = new JButton("Cancel");
+		this.button_submit = new JButton("Submit");
+		this.button_reset = new JButton("Reset");
 		
 		getInvoiceEntry_Chep();
 	}
@@ -105,8 +103,8 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		setPreferredSize(iec_dimension);
 		
 		//add action listeners to JButtons
-		button_cancel.addActionListener(this);
-		button_insert.addActionListener(this);
+		button_reset.addActionListener(this);
+		button_submit.addActionListener(this);
 		
 		/*change font info for certain labels
 		default JLabel font =  "Sans Serif" , Font.PLAIN , 12
@@ -124,23 +122,15 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 		add(text_account, "wrap, wmax 100");
 		
 		add(label_invoice_number, "r");
-		add(text_invoice_number, "pushx, growx");
-		add(label_sub_total, "r");
-		add(label_sub_total_dollars, "split 2, r");
-		add(text_sub_total, "wrap");
+		add(text_invoice_number, "pushx, growx, wrap");
 		
 		add(label_invoice_date, "r");
 		add(text_invoice_date, "split 2, pushx, growx, wmax 60");
-		add(label_invoice_date_example);
-		add(label_tax, "r");
-		add(label_tax_dollars, "split 2, r");
-		add(text_tax, "wrap");
+		add(label_invoice_date_example, "wrap");
 		
-		add(label_reference, "r");
-		add(text_reference, "pushx, growx");
 		add(label_net_total, "r");
-		add(label_net_total_dollars, "split 2, r");
-		add(text_net_total, "wrap, gapbottom 15");
+		/*add(label_net_total_dollars, "split 3, pushx, growx, wmax 60");*/
+		add(text_net_total, "l, wrap, wmax 50, gapbottom 15");
 		
 		add(label_main_product_breakup, "span, center, gapbottom 5");
 		
@@ -182,24 +172,23 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 				text_percent[i] = new JTextField("");
 				if(i != answer - 1) {
 					add(label_product[i], "r");
-					add(text_product[i], "pushx, growx, wmax 200");
+					add(text_product[i], "split 4, pushx, growx, wmax 200, gapright 10px");
 					add(label_region[i], "r");
-					add(text_region[i], "split 3, pushx, growx, wmin 15");
+					add(text_region[i], "pushx, growx, wmin 15");
 					add(label_percent[i], "r");
 					add(text_percent[i], "wrap, pushx, growx, wmin 7");
 				}else{
 					add(label_product[i], "r");
-					add(text_product[i], "pushx, growx, wmax 200");
+					add(text_product[i], "split 4, pushx, growx, wmax 200, gapright 10px");
 					add(label_region[i], "r");
-					add(text_region[i], "split 3, pushx, growx, wmin 15");
+					add(text_region[i], "pushx, growx, wmin 15");
 					add(label_percent[i], "r");
 					add(text_percent[i], "wrap, pushx, growx, wmin 7, gapbottom 15");
 				}
 			}
 			
-			add(button_insert, "tag ok, span, split 2, sizegroup bttn");
-			add(button_cancel, "tag cancel, sizegroup bttn");
-			
+			add(button_submit, "tag ok, span, split 2, sizegroup bttn");
+			add(button_reset, "tag cancel, sizegroup bttn");
 			
 			/*frame.setResizable(true);
 			frame.add(panel);
@@ -212,30 +201,49 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 			err.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand(); //sets String action equal to the string identifying the command for this event
-		if(action.equals("Cancel")) {
-			System.exit(0);
-		}else if(action.equals("Insert")) {
-			String[][] data = new String[answer][10];
+		if(action.equals("Reset")) {
+			clearTextFields();
+		}else if(action.equals("Submit")) {
+			String[][] data = new String[answer][8];
+			Date date = new Date();
+			String dateStr= new SimpleDateFormat("MM/dd/yyyy").format(date);
 			for(int i = 0; i < answer; i++) {
 				data[i][0] = text_account.getText();
 				data[i][1] = text_invoice_number.getText();
 				data[i][2] = text_invoice_date.getText();
-				data[i][3] = text_reference.getText();
-				data[i][4] = text_product[i].getText();
-				data[i][5] = text_region[i].getText();
-				data[i][6] = text_percent[i].getText();
-				data[i][7] = text_sub_total.getText();
-				data[i][8] = text_tax.getText();
-				data[i][9] = text_net_total.getText();
+				data[i][3] = text_product[i].getText();
+				data[i][4] = text_region[i].getText();
+				data[i][5] = text_percent[i].getText();
+				data[i][6] = text_net_total.getText();
+				data[i][7] = dateStr;
 			}
-			frame_to_importSheet = new Invoice_Entry_toImportSheet();
-			frame_to_importSheet.importDataChep(data, answer);
+			/*insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 1);
+			insertDataToImportSheet.insertImportSheetData();*/
+			Invoice_Entry_toImportSheet exportData = new Invoice_Entry_toImportSheet(data, 1);
+			exportData.insertImportSheetData();
+			
+			clearTextFields();
 		}
 	}
+	
+	private void clearTextFields() {
+		
+		text_account.setText("");
+		text_invoice_number.setText("");
+		text_invoice_date.setText("");
+		text_net_total.setText("");
+		for(int i = 0; i < answer; i++) {
+			text_product[i].setText("");
+			text_region[i].setText("");
+			text_percent[i].setText("");
+		}
+		
+	}
+	
 	public Dimension getDimension() {
 		return iec_dimension;
 	}

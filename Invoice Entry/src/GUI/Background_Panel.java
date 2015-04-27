@@ -9,26 +9,21 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-
-
 public class Background_Panel extends JPanel{
-
 	
 	private static final long serialVersionUID = 1L;
 
-	File img_file = new File("logo.png");
+	File img_file;
 	BufferedImage image;
-	
 
 	public Background_Panel()
 	{
 		try {
-			image = ImageIO.read(img_file);
+			image = ImageIO.read(this.getClass().getResource("/res/img/logo_1280x720.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		setLayout(new BorderLayout());
-		
+		setLayout(new BorderLayout());	
 	}
 	
 	@Override

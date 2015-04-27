@@ -15,11 +15,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-
-
-
-
-
 import xlsx_Extractor_Package.CELL_TO_STRING;
 import xlsx_Extractor_Package.XLSX_Extractor;
 
@@ -69,52 +64,56 @@ public class Import_Invoice_Charges {
 				System.exit(0);
 			}
 			for(int j = 0; j < dest_po_file.length; j++) { //for each destination file
-				for(int k = 0; k < 2; k++) { //for each sheet in destination file (will only be 2 for each file: purchase order tab (tab index 0) and bulk tab (tab index 1)
-					Worksheet_Data dest_po_data = new Worksheet_Data(dest_po_file[j], k); //create new object of type Worksheet_Data for referencing destination worksheet
-					int[] column_index = new int[2];
-					if(k == 0) { //if current tab is "purchase orders" tab, "purchase order" column = 11 and "container number" column = 34
-						column_index[0] = 11;
-						column_index[1] = 34;
-					}else{ //if current tab is "bulk" tab, "purchase order" column = 4 and "container number" column = 9
-						column_index[0] = 4;
-						column_index[1] = 9;
+				try {
+					XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(dest_po_file[j]));
+					for(int k = 0; k < 2; k++) { //for each sheet in destination file (will only be 2 for each file: purchase order tab (tab index 0) and bulk tab (tab index 1)
+						XSSFSheet ws = wb.getSheetAt(k);
+						Worksheet_Data dest_po_data = new Worksheet_Data(dest_po_file[j], k); //create new object of type Worksheet_Data for referencing destination worksheet
+						int[] column_index = new int[2];
+						if(k == 0) { //if current tab is "purchase orders" tab, "purchase order" column = 11 and "container number" column = 34
+							column_index[0] = 11;
+							column_index[1] = 34;
+						}else{ //if current tab is "bulk" tab, "purchase order" column = 4 and "container number" column = 9
+							column_index[0] = 4;
+							column_index[1] = 9;
+						}
+						String reference_number = import_sheet.getImportRowRefNum(i); //retrieve string of reference number of current row
+						String[][] matching_po_sheet_data = dest_po_data.getSheetDataIfMatchFound(import_sheet.getImportRowRefNum(i), column_index);
+						
+						if(matching_po_sheet_data != null) { //make sure matching_dest_data was given some value
+							ArrayList<Integer> matching_row_ints = dest_po_data.getMatchingRowNumbers(reference_number, column_index); //get rows of destination file matching reference number
+							ArrayList<String> import_row_data = import_sheet.getRowData(i); //get current row data
+							importCurRow(ws, import_row_data, matching_row_ints, invoice_tracking_data.length, dest_po_data, k); //pass current row's data and list of matching integers into method importCurRow for final importing
+						}
+						wb.close();
 					}
-					String reference_number = import_sheet.getImportRowRefNum(i); //retrieve string of reference number of current row
-					String[][] matching_po_sheet_data = dest_po_data.getSheetDataIfMatchFound(import_sheet.getImportRowRefNum(i), column_index);
-					
-					if(matching_po_sheet_data != null) { //make sure matching_dest_data was given some value
-						ArrayList<Integer> matching_row_ints = dest_po_data.getMatchingRowNumbers(reference_number, column_index); //get rows of destination file matching reference number
-						ArrayList<String> import_row_data = import_sheet.getRowData(i); //get current row data
-						importCurRow(import_row_data, matching_row_ints, invoice_tracking_data.length, dest_po_data, j, k); //pass current row's data and list of matching integers into method importCurRow for final importing
-					}
+				}catch(FileNotFoundException err) {
+					System.out.println("There was an error while attempting to open the destination purchase orders file.");
+					err.printStackTrace();
+				}catch(IOException err) {
+					System.out.println("There was an error while attempting to open the destination purchase orders file.");
+					err.printStackTrace();
 				}
 			}
 		}
 			
 	}
 	
-	private void importCurRow(ArrayList<String> import_row_data, ArrayList<Integer> matching_row_ints, int next_invoice_tracking_row, Worksheet_Data dest_sheet_data, int po_file_index, int po_sheet_index) {
+	private void importCurRow(XSSFSheet ws, ArrayList<String> import_row_data, ArrayList<Integer> matching_row_ints, int next_invoice_tracking_row, Worksheet_Data dest_sheet_data, int po_sheet_index) {
 		
 		for(int i = 0; i < matching_row_ints.size(); i++) { //for each matching row in destination sheet
-			try{
-				String charge_type = import_row_data.get(3);
-				if(charge_type != "Delivery") {
-					int charge_col_index = getChargeColumnNum(charge_type, po_sheet_index); //get column index for this charge
-					if(po_sheet_index == 0) {
-						XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(dest_po_file[po_file_index]));
-						XSSFSheet ws = wb.getSheetAt(po_sheet_index);
-						Row row = ws.getRow(matching_row_ints.get(i));
-						Cell cell = row.getCell(charge_col_index);
-						cell.setCellType(Cell.CELL_TYPE_STRING);
-						cell.setCellValue(addCurAndNewCharge(getActualChargeValue(import_row_data.get(4), matching_row_ints.size()), cell));
-					}
+			String charge_type = import_row_data.get(3);
+			
+			if(charge_type != "Delivery") {
+				int charge_col_index = getChargeColumnNum(charge_type, po_sheet_index); //get column index for this charge
+				
+				if(po_sheet_index == 0) {
+					Row row = ws.getRow(matching_row_ints.get(i));
+					Cell cell = row.getCell(charge_col_index);
+					cell.setCellType(Cell.CELL_TYPE_STRING);
+					cell.setCellValue(addCurAndNewCharge(getActualChargeValue(import_row_data.get(4), matching_row_ints.size()), cell));
 				}
-			}catch(FileNotFoundException err) {
-				System.out.println("There was an error while attempting to open the destination purchase orders file.");
-				err.printStackTrace();
-			}catch(IOException err) {
-				System.out.println("There was an error while attempting to open the destination purchase orders file.");
-				err.printStackTrace();
+				
 			}
 		}
 		//Worksheet_Data invoice_tracking_sheet = new Worksheet_Data(dest_invoice_tracking_file, 0);

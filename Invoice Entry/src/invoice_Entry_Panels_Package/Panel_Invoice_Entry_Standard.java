@@ -3,7 +3,9 @@ package invoice_Entry_Panels_Package;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -33,17 +35,14 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 	JLabel[] charge_label;
 	JComboBox[] combo_boxes;
 	
-	JButton button_insert;
-	JButton button_cancel;
+	JButton button_submit;
+	JButton button_reset;
 	
 	int number_of_charges;
 	
 	Invoice_Entry_toImportSheet transfer_to_import_sheet;
-	File import_file;
 	
-	public Panel_Invoice_Entry_Standard(/*File pass_import_file*/) {
-		
-		this.import_file = new File("C:/Users/Jdemato/Documents/Standard Invoice Charge Import Sheet.xlsx");
+	public Panel_Invoice_Entry_Standard() {
 		
 		this.label_company = new JLabel("Company (Invoice):");
 		this.label_invoice_number = new JLabel("Invoice Number:");
@@ -55,8 +54,8 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 		this.text_date = new JTextField(20);
 		this.text_reference = new JTextField(20);
 		
-		this.button_insert = new JButton("Insert");
-		this.button_cancel = new JButton("Cancel");
+		this.button_submit = new JButton("Submit");
+		this.button_reset = new JButton("Reset");
 		
 		getInvoiceEntry_Standard();
 	}
@@ -64,8 +63,8 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 	public void getInvoiceEntry_Standard() {
 		/*Custom_Functions my_frame = new Custom_Functions(frame);*/
 		setLayout(new MigLayout());
-		button_insert.addActionListener(this);
-		button_cancel.addActionListener(this);
+		button_submit.addActionListener(this);
+		button_reset.addActionListener(this);
 		
 		/*add components to combo box containing charge types and JComboBox for selecting number of charges on invoice
 		count_charges_options made as a String array instead of an integer array because JOptionPane
@@ -73,8 +72,6 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 		String[] charge_types = {"Ocean Freight","Documentation","Clearance","Duty","GST","Warehouse",
 				"Drayage","Delivery","Inland Europe","Miscellaneous"};
 		String[] count_charges_options = {"1","2","3","4","5","6","7","8","9","10"};
-		
-		
 		
 		try {
 			this.number_of_charges = Integer.parseInt((String) JOptionPane.showInputDialog(null, 
@@ -116,8 +113,8 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 			}
 			
 			//add insert and cancel buttons aligned on right side of frame
-			add(button_insert, "skip, split2, base, r"); //skip first column, 
-			add(button_cancel, "base, r");
+			add(button_submit, "skip, split2, base, r"); //skip first column, 
+			add(button_reset, "base, r");
 			
 			/*frame.setResizable(false);
 			frame.add(panel);
@@ -134,10 +131,12 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand(); //sets String action equal to the string identifying the command for this event
-		if(action.equals("Cancel")) {
-			System.exit(0);
-		}else if(action.equals("Insert")) {
-			String[][] data = new String[charge_amount.length][8];
+		if(action.equals("Reset")) {
+			clearTextFields();
+		}else if(action.equals("Submit")) {
+			String[][] data = new String[number_of_charges][8];
+			Date date = new Date();
+			String dateStr= new SimpleDateFormat("MM-dd-yyyy").format(date);
 			for(int i = 0; i < number_of_charges; i++) {
 				data[i][0] = text_invoice_number.getText();
 				data[i][1] = text_company.getText();
@@ -145,10 +144,25 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 				data[i][3] = combo_boxes[i].getSelectedItem().toString();
 				data[i][4] = charge_amount[i].getText();
 				data[i][5] = text_reference.getText();
+				data[i][6] = "";
+				data[i][7] = dateStr;
 			}
-			transfer_to_import_sheet = new Invoice_Entry_toImportSheet();
-			transfer_to_import_sheet.importDataStandard(data);
+			transfer_to_import_sheet = new Invoice_Entry_toImportSheet(data, 0);
+			transfer_to_import_sheet.insertImportSheetData();
 		}
+	}
+	
+	private void clearTextFields() {
+		
+		text_invoice_number.setText("");
+		text_company.setText("");
+		text_date.setText("");
+		text_reference.setText("");
+		for(int i = 0; i < number_of_charges; i++) {
+			combo_boxes[i].setSelectedIndex(0);
+			charge_amount[i].setText("");
+		}
+		
 	}
 	
 	/*frame_to_importSheet = new Invoice_Entry_toImportSheet("Chep", import_file);
