@@ -8,6 +8,9 @@ import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -23,9 +26,11 @@ public class Invoice_Entry_toImportSheet {
 		this.panel_data = panel_data;
 		this.sdChp = sdChp;
 		if(sdChp == 0) {
-			this.impFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Standard Invoice Charge Import Sheet.xlsx");
+			/*this.impFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Standard Invoice Charge Import Sheet.xlsx");*/
+			this.impFile = new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Standard Invoice Charge Import Sheet.xlsx");
 		}else if(sdChp == 1) {
-			this.impFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Chep Invoice Charge Import Sheet.xlsx");
+			/*this.impFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Chep Invoice Charge Import Sheet.xlsx");*/
+			this.impFile = new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Chep Invoice Charge Import Sheet.xlsx");
 		}else{
 			System.out.println("Invoice was not specified as either Standard (0) nor Chep (1).");
 			throw new IllegalArgumentException();
@@ -51,42 +56,62 @@ public class Invoice_Entry_toImportSheet {
 		/**********************************************************************************************************************
 		* Import Data to Invoice Charges Import Sheet
 		*/	
-			int lastRow = impData.length + 1;
+			int lastRow = 0;
+			if(sdChp == 1) {
+				lastRow = impData.length + 1;
+			}else{
+				lastRow = impData.length;
+			}
+			
 			
 			//loop begins at last row with value + 1; ends at however many entries are specified prior (impData.length)
-			for(int i = lastRow + 1; i < panel_data.length + lastRow; i++) {
-				Row row = ws.getRow(i);
+			for(int i = lastRow; i < panel_data.length + lastRow; i++) {
 				
 				for(int j = 0; j < panel_data[0].length; j++) {
 					
-					//set cell = the next empty row (row_next), the matching output column
-					if(ws.getRow(i) != null) {
-						cell = row.createCell((short)j);
-						cell.setCellType(Cell.CELL_TYPE_STRING); //set current cell's type to string for inputting string data
-						
-						if(sdChp != 1 || j != 6) {
-							cell.setCellValue(panel_data[row_count][j]);
-						}else if(panel_data[row_count][j] != "0" && panel_data[row_count][j] != "") { //Net Total ($) column in Chep Invoice Charge Import Sheet
-							/* 
-							 * parse % as string to % as double, divide by 100 to get percent as decimal,
-							 * multiply percent as decimal by the dollar amount, parse double back to string for inputting
-							 */
-							double dec = (Double.parseDouble(panel_data[row_count][j - 1]) / 100);
-							String amt = String.valueOf(dec * Double.parseDouble(panel_data[row_count][j]));
-							cell.setCellValue(amt);
-						}else{
-							cell.setCellValue("0"); //should probably be throwing new exception here... cannot insert blank charge nor charge value of 0.
-						}
-						
+					Row row;
+					if(j != 0) {
+						row = ws.getRow(i);
+						cell = row.createCell((int)j);
+						cell.setCellType(Cell.CELL_TYPE_STRING);
 					}else{
-						System.out.println(i + " == null");
-						continue;
+						//set cell = the next empty row (row_next), the matching output column
+						if(ws.getRow(i) != null) {
+							row = ws.getRow(i);
+							cell = row.createCell((short)j);
+							cell.setCellType(Cell.CELL_TYPE_STRING); //set current cell's type to string for inputting string data
+						}else{
+			                if(ws.getRow(i) == null) {
+			                	ws.createRow(i);
+			                }
+			                row = ws.getRow(i);
+							cell = row.createCell((short)j);
+							if(cell.getCellType() != Cell.CELL_TYPE_STRING) {
+								cell.setCellType(Cell.CELL_TYPE_STRING);
+							}
+						}
 					}
 					
+					if(sdChp != 1 || j != 6) {
+						cell.setCellValue(panel_data[row_count][j]);
+					}else if(panel_data[row_count][j] != "0" && panel_data[row_count][j] != "") { //Net Total ($) column in Chep Invoice Charge Import Sheet
+						/* 
+						 * parse % as string to % as double, divide by 100 to get percent as decimal,
+						 * multiply percent as decimal by the dollar amount, parse double back to string for inputting
+						 */
+						double dec = (Double.parseDouble(panel_data[row_count][j - 1]) / 100);
+						String amt = String.valueOf(dec * Double.parseDouble(panel_data[row_count][j]));
+						cell.setCellValue(amt);
+					}else{
+						cell.setCellValue("0"); //should probably be throwing new exception here... cannot insert blank charge nor charge value of 0.
+					}
+						
+						/*System.out.println(i + " == null");
+						continue;*/
 				}
 				row_count++;
-				
 			}
+			
 			
 			fis.close();
 			FileOutputStream fos = new FileOutputStream(impFile);
@@ -98,7 +123,7 @@ public class Invoice_Entry_toImportSheet {
 		 **********************************************************************************************************************/
 			
 		}catch(NullPointerException err) {
-			System.out.println("Null Pointer Exception Error:  " + err);
+			/*System.out.println("Null Pointer Exception Error:  " + err);*/
 			err.printStackTrace();
 		}catch(ArrayIndexOutOfBoundsException err) {
 			System.out.println("Array Index Out Of Bounds Exception Error:  " + err);

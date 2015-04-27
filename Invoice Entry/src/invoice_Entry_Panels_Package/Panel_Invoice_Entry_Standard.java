@@ -149,6 +149,7 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 			}
 			transfer_to_import_sheet = new Invoice_Entry_toImportSheet(data, 0);
 			transfer_to_import_sheet.insertImportSheetData();
+			clearTextFields();
 		}
 	}
 	
