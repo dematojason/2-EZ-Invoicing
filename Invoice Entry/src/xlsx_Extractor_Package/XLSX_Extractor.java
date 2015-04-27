@@ -105,7 +105,6 @@ public class XLSX_Extractor {
 				return i - 12; //return this row minus 11 (account for 10 blank rows that were checked and 1 more to return last row containing value)
 			}
 		}
-		System.out.println("Get Last Row Num =  " + ws.getLastRowNum());
 		return ws.getLastRowNum();
 		
 	}

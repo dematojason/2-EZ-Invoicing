@@ -23,11 +23,11 @@ public class Invoice_Entry_toImportSheet {
 		this.panel_data = panel_data;
 		this.sdChp = sdChp;
 		if(sdChp == 0) {
-			/*this.impFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Standard Invoice Charge Import Sheet.xlsx");*/
-			this.impFile = new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Standard Invoice Charge Import Sheet.xlsx");
+			this.impFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Standard Invoice Charge Import Sheet.xlsx");
+			/*this.impFile = new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Standard Invoice Charge Import Sheet.xlsx");*/
 		}else if(sdChp == 1) {
-			/*this.impFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Chep Invoice Charge Import Sheet.xlsx");*/
-			this.impFile = new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Chep Invoice Charge Import Sheet.xlsx");
+			this.impFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Chep Invoice Charge Import Sheet.xlsx");
+			/*this.impFile = new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Chep Invoice Charge Import Sheet.xlsx");*/
 		}else{
 			System.out.println("Invoice was not specified as either Standard (0) nor Chep (1).");
 			throw new IllegalArgumentException();

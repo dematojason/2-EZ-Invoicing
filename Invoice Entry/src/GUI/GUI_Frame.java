@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import Import_To_Logistics_And_Invoice_Tracking.Import_Final;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -29,7 +31,8 @@ public class GUI_Frame {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			ArrayList<Image> icons = new ArrayList<Image>(3);
 			for(int i = 4; i < 7; i++) {
-				String tmp = "/res/icon/squareLogo_" + (2 << i-1) + "x" + (2 << i-1) + ".png";
+				//C:\Users\jason.demato\Desktop\Java\Workspace\2-EZ-Invoicing\res\icon
+				String tmp = "/icon/squareLogo_" + (2 << i-1) + "x" + (2 << i-1) + ".png";
 				try {
 					icons.add(ImageIO.read(getClass().getResource(tmp)));
 				} catch (IOException e) {
@@ -129,6 +132,7 @@ public class GUI_Frame {
 										null,
 										new Object[]{}, 
 										null);
+								
 							}
 						});
 						JMenuItem delivery_invoice_entry = new JMenuItem("Delivery Invoice Entry");
@@ -144,6 +148,15 @@ public class GUI_Frame {
 										null, 
 										new Object[]{}, 
 										null);
+							}
+						});
+						
+						JMenuItem insertStandardCharges = new JMenuItem("Insert Standard Charges Test");
+						insertStandardCharges.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								Import_Final impf = new Import_Final();
+								impf.Import_Final_Data();
 							}
 						});
 						
@@ -165,6 +178,7 @@ public class GUI_Frame {
 						invoice_menu.add(CHEP_invoice_entry);
 						invoice_menu.add(standard_invoice_entry);
 						invoice_menu.add(delivery_invoice_entry);
+						invoice_menu.add(insertStandardCharges);
 						// invoice_menu.add(nonapproved_invoice_entry);
 						// invoice_menu.add(approve_nonapproved_invoice_entry);
 						
