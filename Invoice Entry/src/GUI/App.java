@@ -1,7 +1,6 @@
 package GUI;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -26,6 +25,7 @@ public class App implements Runnable{
 		thread.start();
 		}
 	
+	@Override
 	public void run() {
 		long start_time = System.currentTimeMillis();
 		long minute = 60000;

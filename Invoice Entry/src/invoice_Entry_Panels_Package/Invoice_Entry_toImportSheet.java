@@ -8,9 +8,6 @@ import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -72,7 +69,7 @@ public class Invoice_Entry_toImportSheet {
 					Row row;
 					if(j != 0) {
 						row = ws.getRow(i);
-						cell = row.createCell((int)j);
+						cell = row.createCell(j);
 						cell.setCellType(Cell.CELL_TYPE_STRING);
 					}else{
 						//set cell = the next empty row (row_next), the matching output column

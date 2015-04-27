@@ -8,7 +8,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class CELL_TO_STRING {
 
@@ -17,8 +16,8 @@ public class CELL_TO_STRING {
 	private static int cell_type;
 	
 	public CELL_TO_STRING(int cellType, XSSFCell cell) {
-		this.cell_value = cell;
-		this.cell_type = cellType;
+		CELL_TO_STRING.cell_value = cell;
+		CELL_TO_STRING.cell_type = cellType;
 	}
 	
 	public static String getCellToString() throws RuntimeException {

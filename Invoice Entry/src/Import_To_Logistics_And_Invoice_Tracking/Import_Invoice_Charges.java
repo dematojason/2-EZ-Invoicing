@@ -4,19 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import xlsx_Extractor_Package.CELL_TO_STRING;
-import xlsx_Extractor_Package.XLSX_Extractor;
 
 public class Import_Invoice_Charges {
 	
@@ -87,8 +81,10 @@ public class Import_Invoice_Charges {
 						
 						if(matching_po_sheet_data != null) { //make sure matching_dest_data was given some value
 							ArrayList<Integer> matching_row_ints = dest_po_data.getMatchingRowNumbers(reference_number, column_index); //get rows of destination file matching reference number
-							Dat_Standard_Import_Row import_row = new Dat_Standard_Import_Row();
 							ArrayList<String> import_row_data = import_sheet.getRowData(i); //get current row data
+							
+							@SuppressWarnings("unused")
+							Dat_Standard_Import_Row import_row = new Dat_Standard_Import_Row(import_row_data);
 							importCurRow(ws, import_row_data, matching_row_ints, invoice_tracking_data.length, dest_po_data, k); //pass current row's data and list of matching integers into method importCurRow for final importing
 						}
 						wb.close();
