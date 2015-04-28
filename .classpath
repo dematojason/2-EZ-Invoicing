@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="Invoice Entry/src/|Invoice Entry/src/" kind="src" path=""/>
 	<classpathentry kind="src" path="Invoice Entry/src"/>
-	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/miglayout-4.0/miglayout-4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/poi-3.11/poi-3.11-20141221.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/poi-3.11/poi-excelant-3.11-20141221.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/poi-3.11/poi-ooxml-3.11-20141221.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/poi-3.11/poi-ooxml-schemas-3.11-20141221.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/poi-3.11/ooxml-lib/xmlbeans-2.6.0.jar"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/miglayout-4.0.jar/miglayout-4.0.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/poi-3.11/poi-3.11-20141221.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/poi-3.11/poi-excelant-3.11-20141221.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/poi-3.11/poi-ooxml-3.11-20141221.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/poi-3.11/poi-ooxml-schemas-3.11-20141221.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/poi-3.11/ooxml-lib/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

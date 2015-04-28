@@ -3,8 +3,6 @@ package Import_To_Logistics_And_Invoice_Tracking;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import xlsx_Extractor_Package.XLSX_Extractor;
 
 public class Worksheet_Data {
@@ -200,7 +198,7 @@ public class Worksheet_Data {
 			return null;
 		}
 		XLSX_Extractor extract = new XLSX_Extractor(file, ws_pos);
-		return extract.convertObjToStringArray(extract.getCellData());
+		return XLSX_Extractor.convertObjToStringArray(extract.getCellData());
 		
 	}
 	

@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import Import_To_Logistics_And_Invoice_Tracking.Do_It;
-import Import_To_Logistics_And_Invoice_Tracking.Import_Invoice_Charges;
+import Import_To_Logistics_And_Invoice_Tracking.Import_Final;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -32,7 +31,8 @@ public class GUI_Frame {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			ArrayList<Image> icons = new ArrayList<Image>(3);
 			for(int i = 4; i < 7; i++) {
-				String tmp = "/res/icon/squareLogo_" + (2 << i-1) + "x" + (2 << i-1) + ".png";
+				//C:\Users\jason.demato\Desktop\Java\Workspace\2-EZ-Invoicing\res\icon
+				String tmp = "/icon/squareLogo_" + (2 << i-1) + "x" + (2 << i-1) + ".png";
 				try {
 					icons.add(ImageIO.read(getClass().getResource(tmp)));
 				} catch (IOException e) {
@@ -62,6 +62,7 @@ public class GUI_Frame {
 						
 						JMenuItem open_file = new JMenuItem("Open");
 						open_file.addActionListener(new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								
 								try{
@@ -75,9 +76,9 @@ public class GUI_Frame {
 									JScrollPane scroll_pane = new JScrollPane(spreadsheet.getTable());
 									scroll_pane.getHorizontalScrollBar();
 									scroll_pane.setHorizontalScrollBarPolicy(
-											JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+											ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 											scroll_pane.setVerticalScrollBarPolicy(
-											JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+											ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 									content_pane.add(scroll_pane, BorderLayout.CENTER);
 									refresh_frame();
 								} catch(NullPointerException e1) {
@@ -88,6 +89,7 @@ public class GUI_Frame {
 						
 						JMenuItem close_file = new JMenuItem("Close");
 						close_file.addActionListener(new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								content_pane.removeAll();
 								refresh_frame();
@@ -104,6 +106,7 @@ public class GUI_Frame {
 					
 						JMenuItem CHEP_invoice_entry = new JMenuItem("CHEP Invoice Entry");
 						CHEP_invoice_entry.addActionListener(new ActionListener() {	
+							@Override
 							public void actionPerformed(ActionEvent e)	{
 								Panel_Invoice_Entry_Chep iec_panel = new Panel_Invoice_Entry_Chep();
 								JOptionPane.showOptionDialog(null, 
@@ -119,6 +122,7 @@ public class GUI_Frame {
 						
 						JMenuItem standard_invoice_entry = new JMenuItem("IBC / Nature's Intent Invoice Entry");
 						standard_invoice_entry.addActionListener(new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								Panel_Invoice_Entry_Standard ies_panel = new Panel_Invoice_Entry_Standard();
 								JOptionPane.showOptionDialog(null, 
@@ -128,12 +132,12 @@ public class GUI_Frame {
 										null,
 										new Object[]{}, 
 										null);
-								Do_It now = new Do_It(0);
-								now.importDataNow();
+								
 							}
 						});
 						JMenuItem delivery_invoice_entry = new JMenuItem("Delivery Invoice Entry");
 						delivery_invoice_entry.addActionListener(new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								Panel_Invoice_Entry_Delivery ied_panel = new Panel_Invoice_Entry_Delivery();
 								JOptionPane.showOptionDialog(null, 
@@ -144,6 +148,15 @@ public class GUI_Frame {
 										null, 
 										new Object[]{}, 
 										null);
+							}
+						});
+						
+						JMenuItem insertStandardCharges = new JMenuItem("Insert Standard Charges Test");
+						insertStandardCharges.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								Import_Final impf = new Import_Final();
+								impf.Import_Final_Data();
 							}
 						});
 						
@@ -165,6 +178,7 @@ public class GUI_Frame {
 						invoice_menu.add(CHEP_invoice_entry);
 						invoice_menu.add(standard_invoice_entry);
 						invoice_menu.add(delivery_invoice_entry);
+						invoice_menu.add(insertStandardCharges);
 						// invoice_menu.add(nonapproved_invoice_entry);
 						// invoice_menu.add(approve_nonapproved_invoice_entry);
 						
@@ -180,6 +194,7 @@ public class GUI_Frame {
 						
 						JMenuItem invoice_number = new JMenuItem("Invoice Number");
 						invoice_number.addActionListener(new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								 //Do something
 							}
@@ -187,24 +202,28 @@ public class GUI_Frame {
 						
 						JMenuItem invoice_date = new JMenuItem("Invoice Date");
 						invoice_date.addActionListener(new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								 //Do something
 							}
 						});
 						JMenuItem purchase_order_number = new JMenuItem("Purchase Order Number");
 						purchase_order_number.addActionListener(new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								 //Do something
 							}
 						});
 						JMenuItem container_number = new JMenuItem("Container  Number");
 						container_number.addActionListener(new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								 //Do something
 							}
 						});
 						JMenuItem company_name = new JMenuItem("Company Name");
 						company_name.addActionListener(new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								 //Do something
 							}
@@ -220,6 +239,7 @@ public class GUI_Frame {
 				* Search an invoice menu
 				**********************************************************************************************************************/
 				
+				@SuppressWarnings("unused")
 				JMenu search_logisitics = new JMenu("Search Logistics");
 				
 				//Add menus to menu bar

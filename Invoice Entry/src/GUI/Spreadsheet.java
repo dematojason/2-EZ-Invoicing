@@ -2,15 +2,11 @@ package GUI;
 
 import java.io.File;
 
-
 import javax.swing.JTable;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
-
 import xlsx_Extractor_Package.XLSX_Extractor;
-
-	
 
 
 public class Spreadsheet  {
@@ -22,6 +18,8 @@ public class Spreadsheet  {
 			excel_extractor = new XLSX_Extractor(file, 0); //second value passed = the sheet index of the file being passed.. index 0 = first tab of worksheet
 			table = new JTable(excel_extractor.getCellData(), excel_extractor.getColumnHeaders());
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			
+			@SuppressWarnings("unused")
 			UIDefaults defaults = UIManager.getLookAndFeelDefaults();
 		}
 		   

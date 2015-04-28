@@ -2,9 +2,7 @@ package invoice_Entry_Panels_Package;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JButton;
@@ -33,6 +31,8 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 	
 	JTextField[] charge_amount;
 	JLabel[] charge_label;
+	
+	@SuppressWarnings("rawtypes")
 	JComboBox[] combo_boxes;
 	
 	JButton button_submit;
