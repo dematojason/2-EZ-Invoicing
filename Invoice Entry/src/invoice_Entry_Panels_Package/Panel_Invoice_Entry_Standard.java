@@ -116,12 +116,7 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 			add(button_submit, "skip, split2, base, r"); //skip first column, 
 			add(button_reset, "base, r");
 			
-			/*frame.setResizable(false);
-			frame.add(panel);
-			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			frame.pack();
-			my_frame.setWindowPosition_Center(); //Class centers window
-			frame.setVisible(true);*/
+			
 		}catch(NumberFormatException e) { //user clicked cancel
 			System.exit(0);
 		}
@@ -138,8 +133,8 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 			Date date = new Date();
 			String dateStr= new SimpleDateFormat("MM-dd-yyyy").format(date);
 			for(int i = 0; i < number_of_charges; i++) {
-				data[i][0] = text_invoice_number.getText();
-				data[i][1] = text_company.getText();
+				data[i][0] = text_company.getText();
+				data[i][1] = text_invoice_number.getText();
 				data[i][2] = text_date.getText();
 				data[i][3] = combo_boxes[i].getSelectedItem().toString();
 				data[i][4] = charge_amount[i].getText();
@@ -147,8 +142,14 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 				data[i][6] = "";
 				data[i][7] = dateStr;
 			}
-			transfer_to_import_sheet = new Invoice_Entry_toImportSheet(data, 0);
-			transfer_to_import_sheet.insertImportSheetData();
+			
+			if(Invoice_Entry_Validator.isValid(data, 2)) {
+				Invoice_Entry_toImportSheet insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 0);
+				insertDataToImportSheet.insertImportSheetData(); 
+			}
+			else {
+				JOptionPane.showMessageDialog(this, Invoice_Entry_Validator.err_msg);
+			}
 			clearTextFields();
 		}
 	}
@@ -165,10 +166,5 @@ public class Panel_Invoice_Entry_Standard extends JPanel implements ActionListen
 		}
 		
 	}
-	
-	/*frame_to_importSheet = new Invoice_Entry_toImportSheet("Chep", import_file);
-	frame_to_importSheet.importDataChep(text_account.getText(), text_invoice_number.getText(),
-			text_invoice_date.getText(), text_reference.getText(), text_product, text_region, 
-			text_percent, text_sub_total.getText(), text_tax.getText(), text_net_total.getText());*/
 
 }

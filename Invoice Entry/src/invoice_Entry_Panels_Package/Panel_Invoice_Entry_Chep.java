@@ -221,11 +221,14 @@ public class Panel_Invoice_Entry_Chep extends JPanel implements ActionListener{
 				data[i][6] = text_net_total.getText();
 				data[i][7] = dateStr;
 			}
-			/*insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 1);
-			insertDataToImportSheet.insertImportSheetData();*/
-			Invoice_Entry_toImportSheet exportData = new Invoice_Entry_toImportSheet(data, 1);
-			exportData.insertImportSheetData();
-			
+			if(Invoice_Entry_Validator.isValid(data, 0)) {
+				Invoice_Entry_toImportSheet exportData = new Invoice_Entry_toImportSheet(data, 1);
+				exportData.insertImportSheetData();
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(this, Invoice_Entry_Validator.err_msg);
+			}
 			clearTextFields();
 		}
 	}
