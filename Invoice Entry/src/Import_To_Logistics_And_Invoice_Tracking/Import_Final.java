@@ -1,18 +1,19 @@
 package Import_To_Logistics_And_Invoice_Tracking;
 
+import invoice_Entry_Panels_Package.Format_Cell;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -54,22 +55,25 @@ public class Import_Final {
 	
 	public void Import_Final_Data() {
 		impStandard();
-		/*impChep();*/
+		impChep();
 	}
 	
 	private void impStandard() {
 		
 		if(isChargesEmpty()) { //check if there are any charges in Standard Invoice Charges Import Sheet.xlsx
-			System.out.println("Check point 1 FAILUREEEEEE");
 			return;
 		}else{ //insert charges into Invoice Tracking Sheet + Purchase Orders Sheet
-			System.out.println("Check point 1 = GREAT SUCCESS!");
 			XLSX_Extractor extr = new XLSX_Extractor(impFile[0], 0);
 			Object[][] impData = extr.getCellData();
-			for(int i = 0; i < impData.length; i++) {
+			for(int i = 1; i < impData.length; i++) {
 				List<String> curRowData = getCurImpRow(impData, i);
 				try {
-					insCurRow(curRowData, 0);
+					if(curRowData.get(3) != "Delivery") {
+						insCurRow(curRowData, 0);
+					}else{
+						insCurRow(curRowData, 2);
+					}
+					
 				}catch(ParseException err) {
 					err.printStackTrace();
 				}catch(FileNotFoundException err) {
@@ -88,13 +92,14 @@ public class Import_Final {
 		if(isChargesEmpty()) { //check if there are any charges in Chep Invoice Charges Import Sheet.xlsx
 			return;
 		}else{ //insert charges into Invoice Tracking Sheet + Purchase Orders Sheet
-			Object[][] impData = chepImport.getCellData();
-			for(int i = 0; i < impData.length; i++) {
+			XLSX_Extractor extractChep = new XLSX_Extractor(impFile[1], 0);
+			Object[][] impData = extractChep.getCellData();
+			for(int i = 1; i < impData.length; i++) {
 				List<String> curRowData = getCurImpRow(impData, i);
 				try {
-					insCurRow(curRowData, 1);
-				}catch(ParseException err) {
-					err.printStackTrace();
+					
+					insCurChepRow(curRowData);
+					
 				}catch(FileNotFoundException err) {
 					err.printStackTrace();
 				}catch(IOException err) {
@@ -210,11 +215,132 @@ public class Import_Final {
 		
 	}
 	
+	private void insCurChepRow(List<String> curRow) throws FileNotFoundException, IOException {
+		
+		//ask user if holiday or spring
+		//will assume spring for testing purposes
+		String[] opChepData = new String[8];
+		
+		for(int i = 0; i < 8; i++) {
+			opChepData[i] = curRow.get(i);
+		}
+		
+		FileInputStream fis = new FileInputStream(poFile[0]);
+		XSSFWorkbook opWb = new XSSFWorkbook(fis);
+		XSSFSheet opWs = opWb.getSheetAt(2);
+		
+		XLSX_Extractor ex = new XLSX_Extractor(poFile[0], 2);
+		Object[][] opChepShtData = ex.getCellData();
+		int nextRow = opChepShtData.length;
+		
+		Cell cell = null;
+		
+		//ONWARDS!!! TO THE PO SHEET!
+		for(int i = 0; i < 6; i++) {
+			Row row;
+			if(i != 0) {
+				row = opWs.getRow(nextRow);
+				cell = row.createCell(i);
+				cell.setCellType(Cell.CELL_TYPE_STRING);
+			}else if(opWs.getRow(nextRow) != null) {
+				row = opWs.getRow(nextRow);
+				cell = row.createCell((short)i);
+				cell.setCellType(Cell.CELL_TYPE_STRING);
+			}else{
+				opWs.createRow(nextRow);
+				row = opWs.getRow(nextRow);
+				cell = row.createCell((short)i);
+				if(cell.getCellType() != Cell.CELL_TYPE_STRING) {
+					cell.setCellType(Cell.CELL_TYPE_STRING);
+				}
+			}
+			//give cells value + format
+			switch(i) {
+				case 2: //Invoice Date
+					cell.setCellValue(opChepData[i]);
+					Format_Cell fmtDate = new Format_Cell(opWb, cell);
+					fmtDate.date();
+					break;
+				case 5: //Net total ($)
+					cell.setCellValue(opChepData[6]);
+					Format_Cell fmtDolla = new Format_Cell(opWb, cell);
+					fmtDolla.accounting();
+					break;
+				default: //Account Name, Invoice Number, Product Decription, Region
+					cell.setCellValue(opChepData[i]);
+					break;
+			}
+		}
+		fis.close();
+		FileOutputStream fos = new FileOutputStream(poFile[0]);
+		opWb.write(fos);
+		fos.close();
+		opWb.close();
+		
+		
+		
+		//ONWARDS!! TO THE INVOICE TRACKING SHEET!
+		FileInputStream fis2 = new FileInputStream(invFile);
+		XSSFWorkbook opWb2 = new XSSFWorkbook(fis2);
+		XSSFSheet opWs2 = opWb2.getSheetAt(1);
+		
+		XLSX_Extractor ex2 = new XLSX_Extractor(invFile, 1);
+		Object[][] opChepShtData2 = ex2.getCellData();
+		int nextRow2 = opChepShtData2.length + 1;
+		
+		Cell cell2 = null;
+		
+		//ONWARDS!!! TO THE PO SHEET!
+		for(int i = 0; i < 8; i++) {
+			Row row2;
+			if(i != 0) {
+				row2 = opWs2.getRow(nextRow2);
+				cell2 = row2.createCell(i);
+				cell2.setCellType(Cell.CELL_TYPE_STRING);
+			}else if(opWs2.getRow(nextRow2) != null) {
+				row2 = opWs2.getRow(nextRow2);
+				cell2 = row2.createCell((short)i);
+				cell2.setCellType(Cell.CELL_TYPE_STRING);
+			}else{
+				opWs2.createRow(nextRow2);
+				row2 = opWs2.getRow(nextRow2);
+				cell2 = row2.createCell((short)i);
+				if(cell2.getCellType() != Cell.CELL_TYPE_STRING) {
+					cell2.setCellType(Cell.CELL_TYPE_STRING);
+				}
+			}
+			//give cells value + format
+			
+			switch(i) {
+				case 2: //Invoice Date
+				case 7: //Entry Date
+					cell2.setCellValue(opChepData[i]);
+					Format_Cell fmtDate2 = new Format_Cell(opWb2, cell2);
+					fmtDate2.date();
+					break;
+				case 6: //Net total ($)
+					cell2.setCellValue(opChepData[i]);
+					Format_Cell fmtDolla2 = new Format_Cell(opWb2, cell2);
+					fmtDolla2.accounting();
+					break;
+				default: //Account Name, Invoice Number, Product Decription, Region
+					cell2.setCellValue(opChepData[i]);
+					break;
+			}
+		}
+		
+		fis2.close();
+		FileOutputStream fos2 = new FileOutputStream(invFile);
+		opWb2.write(fos2);
+		fos2.close();
+		opWb2.close();
+		
+	}
+	
 	private void insCurRow(List<String> curRow, int rowType) throws FileNotFoundException, IOException, ParseException{
 		
-		System.out.println("Check point 2 = HELL YEA LET IT RIDE!");
 		//insert list of Strings of current row of invoice charges import sheet.xlsx
-		int wsIndex = findWsMatch(curRow.get(5)); //find macthing sheet
+		int wsIndex = findWsMatch(curRow.get(5)); //find matching sheet
 		if(wsIndex != 0) {
 			int matchCount = getMatchCount(wsIndex, curRow.get(5));
 			ArrayList<Integer> matchingRows = getMatchIndexes(wsIndex, curRow.get(5));
@@ -226,6 +352,7 @@ public class Import_Final {
 					column = getChargeColumn(curRow.get(3), 1);
 				}
 				String[][] invTrackData = new String[matchCount][17];
+				String[] insPoCharges = new String[matchCount];
 				
 				//store data into insStrInvoiceTracking array for inserting data into Invoice Tracking Sheet
 				for(int i = 0; i < matchCount; i++) {
@@ -234,6 +361,8 @@ public class Import_Final {
 							case 0: //invoice number
 							case 1: //invoice company
 							case 2: //invoice date
+								invTrackData[i][j] = curRow.get(j);
+								break;
 							case 3: //charge type
 								invTrackData[i][j] = curRow.get(j);
 								break;
@@ -241,15 +370,16 @@ public class Import_Final {
 								invTrackData[i][j] = opData[matchingRows.get(i)][column].toString();
 								break;
 							case 5: //invoice charge amount
-								invTrackData[i][j] = curRow.get(4);
+								invTrackData[i][j] = String.valueOf(Double.parseDouble(curRow.get(4)) / matchCount);
 								break;
 							case 6: //add existing charge + invoice charge amount
 								try {
-									invTrackData[i][j] = String.valueOf(Double.parseDouble(curRow.get(4)) + 
-										Double.parseDouble(opData[matchingRows.get(i)][column].toString()));
-								}catch(NumberFormatException err) {
-									invTrackData[i][j] = curRow.get(4);
+									invTrackData[i][j] = String.valueOf(Double.parseDouble(invTrackData[i][4]) + 
+											Double.parseDouble(invTrackData[i][5]));
+								}catch(NumberFormatException err) { //one value was blank string, so could not parse to double
+									invTrackData[i][j] = invTrackData[i][5];
 								}
+								insPoCharges[i] = invTrackData[i][j];
 								break;
 							case 7: //delivery date (if delivery charge)
 								invTrackData[i][j] = curRow.get(6);
@@ -265,14 +395,29 @@ public class Import_Final {
 								invTrackData[i][j] = curRow.get(5);
 								break;
 							case 12: //vendor name
-								invTrackData[i][j] = opData[matchingRows.get(i)][0].toString();
-								break;
+								if(wsIndex == 1 || wsIndex == 2) {
+									invTrackData[i][j] = opData[matchingRows.get(i)][0].toString();
+									break;
+								}else{
+									invTrackData[i][j] = opData[matchingRows.get(i)][1].toString();
+									break;
+								}
 							case 13: //region
-								invTrackData[i][j] = opData[matchingRows.get(i)][4].toString();
-								break;
+								if(wsIndex == 1 || wsIndex == 2) {
+									invTrackData[i][j] = opData[matchingRows.get(i)][4].toString();
+									break;
+								}else{
+									invTrackData[i][j] = "";
+									break;
+								}
 							case 14: //delivery date/port ETA
-								invTrackData[i][j] = opData[matchingRows.get(i)][6].toString();
-								break;
+								if(wsIndex == 1 || wsIndex == 2) {
+									invTrackData[i][j] = opData[matchingRows.get(i)][6].toString();
+									break;
+								}else{
+									invTrackData[i][j] = opData[matchingRows.get(i)][5].toString();
+									break;
+								}
 							case 15: //workbook name
 								invTrackData[i][j] = fileName;
 								break;
@@ -285,6 +430,68 @@ public class Import_Final {
 							}
 					}
 				}
+				
+				FileInputStream fis2;
+				XSSFWorkbook opWb;
+				XSSFSheet opWs;
+				File outFile = null;
+				int sheetAt = 0;
+				
+				switch(wsIndex) {
+					case 0: //Spring workbook, PO tab
+						outFile = poFile[1];
+						sheetAt = 0;
+						break;
+					case 1: //Holiday workbook, PO tab
+						outFile = poFile[0];
+						sheetAt = 0;
+						break;
+					case 2: //Spring workbook, bulk tab
+						outFile = poFile[1];
+						sheetAt = 1;
+						break;
+					case 3: //Holiday workbook, bulk tab
+						outFile = poFile[0];
+						sheetAt = 1;
+						break;
+					default: //IMPOSSIBLEEEEE
+						System.out.println("Da fuckkkkkk.... Import_Final.java, part where you set output Purchase Order file.");
+						break;
+				}
+				fis2 = new FileInputStream(outFile);
+				opWb = new XSSFWorkbook(fis2);
+				opWs = opWb.getSheetAt(sheetAt);
+				
+				Cell cell2 = null;
+				for(int i = 0; i < matchingRows.size(); i++) {
+					Row row2;
+					int curRowIndex = matchingRows.get(i);
+					if(opWs.getRow(curRowIndex) != null) {
+						row2 = opWs.getRow(curRowIndex);
+						cell2 = row2.getCell(column);
+						cell2.setCellType(Cell.CELL_TYPE_STRING);
+					}else {
+						//this is not good.
+						System.out.println("(Russian Accent) This very bad. Row should not be null here.");
+						
+						row2 = opWs.getRow(curRowIndex);
+						cell2 = row2.createCell((short)curRowIndex);
+						if(cell2.getCellType() != Cell.CELL_TYPE_STRING) {
+							cell2.setCellType(Cell.CELL_TYPE_STRING);
+						}
+					}
+					//add value to cell
+					cell2.setCellValue(Double.parseDouble(insPoCharges[i]));
+					//format cell as accounting format (type of excel formatting for currency)
+					Format_Cell fmtPoChg = new Format_Cell(opWb, cell2);
+					fmtPoChg.accounting();
+				}
+				fis2.close();
+				FileOutputStream fos2 = new FileOutputStream(outFile);
+				opWb.write(fos2);
+				fos2.close();
+				opWb.close();
+				
 				XLSX_Extractor extract = new XLSX_Extractor(invFile, 0);
 				Object[][] invData = extract.getCellData();
 				
@@ -297,10 +504,8 @@ public class Import_Final {
 				int lastRow = invData.length;
 				
 				for(int i = lastRow; i < invTrackData.length + lastRow; i++) {
-					System.out.println("Check Point 3 - Wow. Nice.");
 					for(int j = 0; j < invTrackData[0].length; j++) {
 						Row row;
-						System.out.println("Check Point 4 - Ok. I see you.");
 						if(j != 0) {
 							row = ws.getRow(i);
 							cell = row.createCell(j);
@@ -320,8 +525,17 @@ public class Import_Final {
 							}
 						}
 						//add value to cell
-						System.out.println("Check Point 5 - It's actually working?");
-						cell.setCellValue(invTrackData[rowCount][j]);
+						if(j==4||j==5||j==6) { //format any dollar value cells to accounting format
+							cell.setCellValue(invTrackData[rowCount][j]);
+							Format_Cell fmtCellAcct = new Format_Cell(wb, cell);
+							fmtCellAcct.accounting();
+						}else if(j==2||j==7||j==8||j==14){ //format any date value cells to date format
+							Format_Cell fmtCellDate = new Format_Cell(wb, cell);
+							fmtCellDate.date();
+							cell.setCellValue(invTrackData[rowCount][j]);
+						}else{
+							cell.setCellValue(invTrackData[rowCount][j]);
+						}
 					}
 					rowCount++;
 				}
@@ -420,20 +634,32 @@ public class Import_Final {
 		
 	}
 	
+	public static void removeRow(XSSFSheet sheet, int rowIndex) {
+	    int lastRowNum=sheet.getLastRowNum();
+	    if(rowIndex >= 0 && rowIndex < lastRowNum){
+	        sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
+	    }
+	    if(rowIndex == lastRowNum){
+	        XSSFRow removingRow = sheet.getRow(rowIndex);
+	        if(removingRow != null){
+	            sheet.removeRow(removingRow);
+	        }
+	    }
+	}
+	
 	private List<String> getCurImpRow(Object[][] data, int index) {
 		
 		//return list of strings made up of current row in Object[][] data
 		List<String> dataList = new ArrayList<String>();
-		for(int i = 0; i < data[index].length; i++) {
-			System.out.println("index: " + index + ",  i: " + i);
-			dataList.add(data[index][i].toString());
+		for(int i = 0; i < data[0].length; i++) {
+			dataList.add(data[0][i].toString());
 		}
 		
 		return dataList;
 	}
 	
 	private static boolean isChargesEmpty() {
-		
+	
 		
 		return false; //no charges found in import Sheet
 	}
