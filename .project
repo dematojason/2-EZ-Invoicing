@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src</name>
+			<type>2</type>
+			<location>C:/Users/Jdemato/Desktop/JavaWorkspace/2-EZ-Invoicing/Invoice Entry/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>
