@@ -5,7 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,13 +22,20 @@ import xlsx_Extractor_Package.XLSX_Extractor;
 
 public class Import_Final {
 
-	private static File[] impFile = {new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Standard Invoice Charge Import Sheet.xlsx"),
-			new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Chep Invoice Charge Import Sheet.xlsx")};
+	//C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs
 	
-	private static File[] poFile = {new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/server/Spring 2015 Purchase Orders.xlsx"), 
-			new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/server/Holiday 2015 Purchase Orders.xlsx")};
+	/*private static File[] impFile = {new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Standard Invoice Charge Import Sheet.xlsx"),
+			new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Chep Invoice Charge Import Sheet.xlsx")};*/
+	private static File[] impFile = {new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Standard Invoice Charge Import Sheet.xlsx"), 
+			new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Chep Invoice Charge IMport Sheet.xlsx")};
 	
-	private static File invFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/server/Invoice Tracking.xlsx");
+	/*private static File[] poFile = {new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/server/Spring 2015 Purchase Orders.xlsx"), 
+			new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/server/Holiday 2015 Purchase Orders.xlsx")};*/
+	private static File[] poFile = {new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Spring 2015 Purchase Orders.xlsx"), 
+			new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Holiday 2015 Purchase Orders.xlsx")};
+	
+	/*private static File invFile = new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/server/Invoice Tracking.xlsx");*/
+	private static File invFile = new File("C:/Users/Jdemato/Documents/2EZ Invoicing Ref Docs/Invoice Tracking.xlsx");
 	
 	XLSX_Extractor standImport = new XLSX_Extractor(impFile[0], 0);
 	XLSX_Extractor chepImport = new XLSX_Extractor(impFile[1], 0);
@@ -54,14 +64,14 @@ public class Import_Final {
 			return;
 		}else{ //insert charges into Invoice Tracking Sheet + Purchase Orders Sheet
 			System.out.println("Check point 1 = GREAT SUCCESS!");
-			XLSX_Extractor extr = new XLSX_Extractor(new File("C:/Users/jason.demato/Documents/ref/2EZ Invoicing/lib/Standard Invoice Charge Import Sheet.xlsx"), 0);
+			XLSX_Extractor extr = new XLSX_Extractor(impFile[0], 0);
 			Object[][] impData = extr.getCellData();
 			for(int i = 0; i < impData.length; i++) {
 				List<String> curRowData = getCurImpRow(impData, i);
 				try {
 					insCurRow(curRowData, 0);
-				/*}catch(ExceptionInInitializerError err) {
-					err.printStackTrace();*/
+				}catch(ParseException err) {
+					err.printStackTrace();
 				}catch(FileNotFoundException err) {
 					err.printStackTrace();
 				}catch(IOException err) {
@@ -83,6 +93,8 @@ public class Import_Final {
 				List<String> curRowData = getCurImpRow(impData, i);
 				try {
 					insCurRow(curRowData, 1);
+				}catch(ParseException err) {
+					err.printStackTrace();
 				}catch(FileNotFoundException err) {
 					err.printStackTrace();
 				}catch(IOException err) {
@@ -91,6 +103,34 @@ public class Import_Final {
 				
 			}
 		}
+		
+	}
+	
+	private ArrayList<Integer> getMatchIndexes(int wsNum, String searchStr) {
+		
+		ArrayList<Integer> returnList = new ArrayList<Integer>();
+		
+		switch(wsNum) {
+			case 1:
+			case 2:
+				for(int i = 0; i < opData.length; i++) {
+					if(!opData[i][11].toString().matches(searchStr) && !opData[i][34].toString().matches(searchStr)) { //no match row i
+						continue;
+					}else{ //match found
+						returnList.add(i);
+					}
+				}
+			case 3:
+			case 4:
+				for(int i = 0; i < opData.length; i++) {
+					if(!opData[i][4].toString().matches(searchStr) && !opData[i][9].toString().matches(searchStr)) { //no match in row i
+						continue;
+					}else{ //match found
+						returnList.add(i);
+					}
+				}
+		}
+		return returnList;
 		
 	}
 	
@@ -105,7 +145,7 @@ public class Import_Final {
 					if(!opData[i][11].toString().matches(searchStr) && !opData[i][34].toString().matches(searchStr)) { //no match in row i
 						continue;
 					}else{ //match found
-						rowMatchIndex.add(i);
+						//this.rowMatchIndex.add(i);
 						counter++;
 					}
 				}
@@ -115,7 +155,7 @@ public class Import_Final {
 					if(!opData[i][4].toString().matches(searchStr) && !opData[i][9].toString().matches(searchStr)) { //no match in row i
 						continue;
 					}else{ //match found
-						rowMatchIndex.add(i);
+						//this.rowMatchIndex.add(i);
 						counter++;
 					}
 				}
@@ -170,13 +210,14 @@ public class Import_Final {
 		
 	}
 	
-	private void insCurRow(List<String> curRow, int rowType) throws FileNotFoundException, IOException{
+	private void insCurRow(List<String> curRow, int rowType) throws FileNotFoundException, IOException, ParseException{
 		
 		System.out.println("Check point 2 = HELL YEA LET IT RIDE!");
 		//insert list of Strings of current row of invoice charges import sheet.xlsx
 		int wsIndex = findWsMatch(curRow.get(5)); //find macthing sheet
 		if(wsIndex != 0) {
 			int matchCount = getMatchCount(wsIndex, curRow.get(5));
+			ArrayList<Integer> matchingRows = getMatchIndexes(wsIndex, curRow.get(5));
 			if(matchCount > 0) {
 				int column = 0;
 				if(wsIndex == 1 || wsIndex == 2) {
@@ -195,33 +236,52 @@ public class Import_Final {
 							case 2: //invoice date
 							case 3: //charge type
 								invTrackData[i][j] = curRow.get(j);
+								break;
 							case 4: //existing charge amount
-								invTrackData[i][j] = opData[rowMatchIndex.get(i)][column].toString();
+								invTrackData[i][j] = opData[matchingRows.get(i)][column].toString();
+								break;
 							case 5: //invoice charge amount
 								invTrackData[i][j] = curRow.get(4);
+								break;
 							case 6: //add existing charge + invoice charge amount
-								invTrackData[i][j] = String.valueOf(Double.parseDouble(curRow.get(4)) + Double.parseDouble(curRow.get(5)));
+								try {
+									invTrackData[i][j] = String.valueOf(Double.parseDouble(curRow.get(4)) + 
+										Double.parseDouble(opData[matchingRows.get(i)][column].toString()));
+								}catch(NumberFormatException err) {
+									invTrackData[i][j] = curRow.get(4);
+								}
+								break;
 							case 7: //delivery date (if delivery charge)
 								invTrackData[i][j] = curRow.get(6);
-							case 8:
+								break;
+							case 8: //entry date
 								invTrackData[i][j] = curRow.get(7);
+								break;
 							case 9: //notes.. will be added manually into excel sheet by user
 							case 10: //blank column in excel sheet for separating invoice information and product information
 								invTrackData[i][j] = "";
+								break;
 							case 11: //product reference #
 								invTrackData[i][j] = curRow.get(5);
+								break;
 							case 12: //vendor name
-								invTrackData[i][j] = opData[rowMatchIndex.get(i)][0].toString();
+								invTrackData[i][j] = opData[matchingRows.get(i)][0].toString();
+								break;
 							case 13: //region
-								invTrackData[i][j] = opData[rowMatchIndex.get(i)][4].toString();
+								invTrackData[i][j] = opData[matchingRows.get(i)][4].toString();
+								break;
 							case 14: //delivery date/port ETA
-								invTrackData[i][j] = opData[rowMatchIndex.get(i)][6].toString();
+								invTrackData[i][j] = opData[matchingRows.get(i)][6].toString();
+								break;
 							case 15: //workbook name
 								invTrackData[i][j] = fileName;
+								break;
 							case 16: //sheet name
 								invTrackData[i][j] = sheetName;
+								break;
 							default: //IMPOSSIBLEEEEE
 								invTrackData[i][j] = curRow.get(j);
+								break;
 							}
 					}
 				}
