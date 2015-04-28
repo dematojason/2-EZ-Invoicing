@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -68,21 +69,21 @@ public class Panel_Invoice_Entry_Delivery extends JPanel implements ActionListen
 			for(int i = 0; i < 7; i++) {
 				data[0][i] = text_fields[i].getText();
 			}
-			
-			/*{"Invoice Number",  "Invoice Company", "Invoice Date", 
-				"Charge Type", "Charge Amount", "Reference Number",
-				"Delivery Date"};*/
-			Invoice_Entry_toImportSheet insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 0);
-			insertDataToImportSheet.insertImportSheetData();
+			if(Invoice_Entry_Validator.isValid(data, 1)) {
+				Invoice_Entry_toImportSheet insertDataToImportSheet = new Invoice_Entry_toImportSheet(data, 0);
+				insertDataToImportSheet.insertImportSheetData(); 
+			}
+			else {
+				JOptionPane.showMessageDialog(this, Invoice_Entry_Validator.err_msg);
+			}
+			clearTextFields();
 		}
 	}
 	
 	private void clearTextFields() {
-		
 		for(int i = 0; i < label_strings.length; i++) {
 			text_fields[i].setText("");
-		}
-		
+		}	
 	}
 	
 }

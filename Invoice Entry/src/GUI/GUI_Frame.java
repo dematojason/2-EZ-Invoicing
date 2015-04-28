@@ -29,17 +29,18 @@ public class GUI_Frame {
 			
 			frame = new JFrame("2EZ Invoicing");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			ArrayList<Image> icons = new ArrayList<Image>(3);
+			/*ArrayList<Image> icons = new ArrayList<Image>(3);
 			for(int i = 4; i < 7; i++) {
 				//C:\Users\jason.demato\Desktop\Java\Workspace\2-EZ-Invoicing\res\icon
-				String tmp = "/icon/squareLogo_" + (2 << i-1) + "x" + (2 << i-1) + ".png";
+				String tmp = "squareLogo_" + (2 << i-1) + "x" + (2 << i-1) + ".png";
+				System.out.println(tmp);
 				try {
 					icons.add(ImageIO.read(getClass().getResource(tmp)));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			frame.setIconImages(icons);
+			frame.setIconImages(icons);*/
 			content_pane = new Background_Panel();
 			frame.setContentPane(content_pane);
 			JFrame.setDefaultLookAndFeelDecorated(true);
@@ -142,7 +143,7 @@ public class GUI_Frame {
 								Panel_Invoice_Entry_Delivery ied_panel = new Panel_Invoice_Entry_Delivery();
 								JOptionPane.showOptionDialog(null, 
 										ied_panel,
-										"Chep Panel", 
+										"Delivery", 
 										JOptionPane.DEFAULT_OPTION,
 										JOptionPane.INFORMATION_MESSAGE, 
 										null, 
